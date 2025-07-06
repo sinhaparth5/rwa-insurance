@@ -1,4 +1,4 @@
-import { InsuranceDashboard } from '@/components/InsuranceDashboard';
+import { InsuranceDashboard } from '@/components/insurance/InsuranceDashboard';
 import { generateBlockDAGMetadata } from '@/utils/seo';
 
 export async function generateMetadata() {
