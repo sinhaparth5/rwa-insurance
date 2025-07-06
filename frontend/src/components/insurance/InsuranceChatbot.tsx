@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useWalletAuth } from '@/hooks/useWalletAuth';
-import type { ChatMessage } from '../types/chatbot.d.ts';
+import type { ChatMessage } from '@/types/chatbot';
 
 export function InsuranceChatbot() {
   const { userSession } = useWalletAuth();

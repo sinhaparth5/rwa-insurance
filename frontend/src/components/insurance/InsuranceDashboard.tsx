@@ -150,7 +150,7 @@ export function InsuranceDashboard() {
                     </div>
                     <div>
                       <span className="text-gray-600">Expires:</span>
-                      <span className="ml-2 font-medium">{new Date(policy.expiresAt).toLocaleDateString()}</span>
+                      <span className="ml-2 font-medium">{new Date(policy.expiredAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
