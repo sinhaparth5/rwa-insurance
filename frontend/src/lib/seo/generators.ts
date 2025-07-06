@@ -20,7 +20,7 @@ export interface SEOConfig {
   keywords?: string[];
   image?: string;
   url?: string;
-  type?: 'website' | 'article' | 'product' | 'profile' | 'app';
+  type?: 'website' | 'article' | 'profile'; // ✅ Removed 'app' and 'product' - not valid in Next.js
   publishedTime?: string;
   modifiedTime?: string;
   author?: string;
@@ -103,7 +103,7 @@ export class RWAInsuranceSEOGenerator {
         nocache: seoConfig.robots?.nocache ?? seoConfig.requiresAuth,
       },
       openGraph: {
-        type: seoConfig.type || 'website',
+        type: seoConfig.type || 'website', // ✅ Default to 'website' which is valid
         siteName: this.config.siteName,
         title: seoConfig.title,
         description: seoConfig.description,
@@ -304,7 +304,7 @@ export class RWAInsuranceSEOGenerator {
       title: baseTitle,
       description: 'Manage your tokenized asset insurance policies, view claims status, monitor coverage, and track premiums in your personal dashboard.',
       url: `${baseUrl}/dashboard`,
-      type: 'app',
+      type: 'website', // ✅ Changed from 'app' to 'website'
       keywords: ['insurance dashboard', 'policy management', 'claims tracking'],
       priority: 0.5,
       changefreq: 'always',
@@ -323,7 +323,7 @@ export class RWAInsuranceSEOGenerator {
       title: 'Create Insurance Policy - AI-Powered Risk Assessment',
       description: 'Create a new insurance policy for your tokenized assets. Get instant AI risk assessment, competitive premiums, and comprehensive coverage options.',
       url: `${baseUrl}/create-policy`,
-      type: 'app',
+      type: 'website', // ✅ Changed from 'app' to 'website'
       keywords: ['create insurance policy', 'ai risk assessment', 'tokenized asset insurance'],
       priority: 0.7,
       changefreq: 'monthly',
@@ -345,7 +345,7 @@ export class RWAInsuranceSEOGenerator {
         ? `Insure your tokenized ${vehicle.make} ${vehicle.model} ${vehicle.year}. AI risk assessment, competitive premiums, and comprehensive coverage for classic and modern vehicles.`
         : 'Comprehensive insurance coverage for tokenized vehicles. AI-powered risk assessment and smart contract protection.',
       url: `${baseUrl}/assets/vehicle/${tokenId}`,
-      type: 'product',
+      type: 'website',
       keywords: [
         'tokenized vehicle insurance',
         vehicle?.make?.toLowerCase(),
@@ -377,6 +377,223 @@ export class RWAInsuranceSEOGenerator {
         nosnippet: isAuthenticated,
       },
       priority: 0.5,
+      changefreq: 'weekly',
+    };
+  }
+
+  // Add placeholder methods for missing SEO generators
+  private generateHowItWorksPageSEO(baseUrl: string, data?: Record<string, any>): SEOConfig {
+    return {
+      title: 'How It Works - AI-Powered Insurance Process',
+      description: 'Learn how our AI-powered insurance platform works. From risk assessment to claims processing, discover the simple steps to protect your tokenized assets.',
+      url: `${baseUrl}/how-it-works`,
+      type: 'website',
+      keywords: ['how insurance works', 'ai insurance process', 'tokenized asset protection'],
+      priority: 0.8,
+      changefreq: 'monthly',
+    };
+  }
+
+  private generateBlogPageSEO(baseUrl: string, data?: Record<string, any>): SEOConfig {
+    return {
+      title: 'Blog - RWA Insurance News & Insights',
+      description: 'Stay updated with the latest in RWA insurance, blockchain technology, and AI-powered risk assessment. Expert insights and industry news.',
+      url: `${baseUrl}/blog`,
+      type: 'website',
+      priority: 0.7,
+      changefreq: 'daily',
+    };
+  }
+
+  private generateBlogPostSEO(baseUrl: string, params?: Record<string, string>, data?: Record<string, any>): SEOConfig {
+    const post = data?.post;
+    const slug = params?.slug;
+
+    return {
+      title: post?.title || 'Blog Post',
+      description: post?.excerpt || 'Read our latest insights on RWA insurance and blockchain technology.',
+      url: `${baseUrl}/blog/${slug}`,
+      type: 'article',
+      priority: 0.6,
+      changefreq: 'yearly',
+    };
+  }
+
+  private generateDocsPageSEO(baseUrl: string, data?: Record<string, any>): SEOConfig {
+    return {
+      title: 'Documentation - RWA Insurance Developer Guide',
+      description: 'Complete documentation for integrating with RWA Insurance Protocol. APIs, smart contracts, and developer resources.',
+      url: `${baseUrl}/docs`,
+      type: 'website',
+      priority: 0.8,
+      changefreq: 'weekly',
+    };
+  }
+
+  private generateDocPageSEO(baseUrl: string, params?: Record<string, string>, data?: Record<string, any>): SEOConfig {
+    const slug = params?.slug;
+    return {
+      title: `Documentation - ${slug}`,
+      description: 'Developer documentation for RWA Insurance Protocol.',
+      url: `${baseUrl}/docs/${slug}`,
+      type: 'article',
+      priority: 0.6,
+      changefreq: 'monthly',
+    };
+  }
+
+  private generateContactPageSEO(baseUrl: string, data?: Record<string, any>): SEOConfig {
+    return {
+      title: 'Contact Us - RWA Insurance Support',
+      description: 'Get in touch with our team. Support, partnerships, and general inquiries for RWA Insurance Protocol.',
+      url: `${baseUrl}/contact`,
+      type: 'website',
+      priority: 0.6,
+      changefreq: 'monthly',
+    };
+  }
+
+  private generatePrivacyPageSEO(baseUrl: string, data?: Record<string, any>): SEOConfig {
+    return {
+      title: 'Privacy Policy - RWA Insurance Protocol',
+      description: 'Our privacy policy and how we protect your data on the RWA Insurance platform.',
+      url: `${baseUrl}/privacy`,
+      type: 'website',
+      priority: 0.3,
+      changefreq: 'yearly',
+    };
+  }
+
+  private generateTermsPageSEO(baseUrl: string, data?: Record<string, any>): SEOConfig {
+    return {
+      title: 'Terms of Service - RWA Insurance Protocol',
+      description: 'Terms and conditions for using the RWA Insurance Protocol platform.',
+      url: `${baseUrl}/terms`,
+      type: 'website',
+      priority: 0.3,
+      changefreq: 'yearly',
+    };
+  }
+
+  private generateLoginPageSEO(baseUrl: string, data?: Record<string, any>): SEOConfig {
+    return {
+      title: 'Login - RWA Insurance Protocol',
+      description: 'Sign in to your RWA Insurance account to manage policies and claims.',
+      url: `${baseUrl}/login`,
+      type: 'website',
+      priority: 0.4,
+      changefreq: 'monthly',
+      robots: { index: false, follow: false },
+    };
+  }
+
+  private generateSignupPageSEO(baseUrl: string, data?: Record<string, any>): SEOConfig {
+    return {
+      title: 'Sign Up - RWA Insurance Protocol',
+      description: 'Create your RWA Insurance account to start protecting your tokenized assets.',
+      url: `${baseUrl}/signup`,
+      type: 'website',
+      priority: 0.5,
+      changefreq: 'monthly',
+    };
+  }
+
+  // Add other missing methods as placeholders
+  private generatePoliciesPageSEO(baseUrl: string, data?: Record<string, any>, user?: any, isAuthenticated?: boolean): SEOConfig {
+    return {
+      title: 'My Policies - Insurance Management',
+      description: 'View and manage your insurance policies.',
+      url: `${baseUrl}/dashboard/policies`,
+      type: 'website',
+      requiresAuth: true,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  private generatePolicyDetailSEO(baseUrl: string, params?: Record<string, string>, data?: Record<string, any>, user?: any, isAuthenticated?: boolean): SEOConfig {
+    return {
+      title: 'Policy Details',
+      description: 'View detailed information about your insurance policy.',
+      url: `${baseUrl}/dashboard/policies/${params?.id}`,
+      type: 'website',
+      requiresAuth: true,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  private generateClaimsPageSEO(baseUrl: string, data?: Record<string, any>, user?: any, isAuthenticated?: boolean): SEOConfig {
+    return {
+      title: 'My Claims - Claims Management',
+      description: 'View and manage your insurance claims.',
+      url: `${baseUrl}/dashboard/claims`,
+      type: 'website',
+      requiresAuth: true,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  private generateClaimDetailSEO(baseUrl: string, params?: Record<string, string>, data?: Record<string, any>, user?: any, isAuthenticated?: boolean): SEOConfig {
+    return {
+      title: 'Claim Details',
+      description: 'View detailed information about your insurance claim.',
+      url: `${baseUrl}/dashboard/claims/${params?.id}`,
+      type: 'website',
+      requiresAuth: true,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  private generateAssetsPageSEO(baseUrl: string, data?: Record<string, any>, user?: any, isAuthenticated?: boolean): SEOConfig {
+    return {
+      title: 'My Assets - Asset Management',
+      description: 'View and manage your tokenized assets.',
+      url: `${baseUrl}/dashboard/assets`,
+      type: 'website',
+      requiresAuth: true,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  private generateAssetDetailSEO(baseUrl: string, params?: Record<string, string>, data?: Record<string, any>, user?: any, isAuthenticated?: boolean): SEOConfig {
+    return {
+      title: 'Asset Details',
+      description: 'View detailed information about your tokenized asset.',
+      url: `${baseUrl}/dashboard/assets/${params?.tokenId}`,
+      type: 'website',
+      requiresAuth: true,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  private generateSubmitClaimSEO(baseUrl: string, data?: Record<string, any>, user?: any, isAuthenticated?: boolean): SEOConfig {
+    return {
+      title: 'Submit Claim - File Insurance Claim',
+      description: 'Submit a new insurance claim for your tokenized assets.',
+      url: `${baseUrl}/submit-claim`,
+      type: 'website',
+      requiresAuth: true,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  private generatePublicPropertySEO(baseUrl: string, params?: Record<string, string>, data?: Record<string, any>): SEOConfig {
+    return {
+      title: 'Tokenized Property Insurance',
+      description: 'Comprehensive insurance coverage for tokenized real estate properties.',
+      url: `${baseUrl}/assets/property/${params?.tokenId}`,
+      type: 'website',
+      priority: 0.6,
+      changefreq: 'weekly',
+    };
+  }
+
+  private generatePublicArtSEO(baseUrl: string, params?: Record<string, string>, data?: Record<string, any>): SEOConfig {
+    return {
+      title: 'Tokenized Art Insurance',
+      description: 'Protect your valuable art and collectibles with specialized tokenized insurance.',
+      url: `${baseUrl}/assets/art/${params?.tokenId}`,
+      type: 'website',
+      priority: 0.6,
       changefreq: 'weekly',
     };
   }
