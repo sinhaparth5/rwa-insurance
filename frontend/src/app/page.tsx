@@ -6,6 +6,9 @@ import ConnectButton from '@/components/ConnectButton';
 import { InsuranceChatbot } from '@/components/insurance/InsuranceChatbot';
 import { WalletStatus } from '@/components/WalletStatus';
 import { ShieldCheckIcon } from '@/components/ui/shield-check';
+import { ClockIcon } from '@/components/ui/clock';
+import { LayoutPanelTopIcon } from '@/components/ui/layout-panel-top';
+import { RocketIcon } from '@/components/ui/rocket';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateRWAMetadata({
@@ -240,27 +243,30 @@ export default function HomePage() {
               </div>
               <div className="text-white">
                 <div className="bg-blue-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                  <ClockIcon />
+                  {/* <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  </svg> */}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Verified Claims</h3>
                 <p className="text-blue-100">Oracle-based verification ensures legitimate claims are processed quickly.</p>
               </div>
               <div className="text-white">
                 <div className="bg-blue-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                  <LayoutPanelTopIcon />
+                  {/* <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                  </svg>
+                  </svg> */}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Transparent Pricing</h3>
                 <p className="text-blue-100">AI-calculated premiums with clear breakdown of all factors and fees.</p>
               </div>
               <div className="text-white">
                 <div className="bg-blue-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                  <RocketIcon />
+                  {/* <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                  </svg>
+                  </svg> */}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Instant Payouts</h3>
                 <p className="text-blue-100">Automated claims processing with immediate stablecoin payouts.</p>
