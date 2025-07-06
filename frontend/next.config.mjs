@@ -8,7 +8,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'api.web3modal.org', // Add for Web3Modal assets
+        hostname: 'api.web3modal.org',
       },
     ]
   },
@@ -59,10 +59,12 @@ const nextConfig = {
     '@walletconnect/core',
     '@walletconnect/utils',
   ],
+  
   // Handle missing environment variables gracefully
   env: {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   },
+  
   async headers() {
     return [
       {
@@ -72,13 +74,12 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              script-src 'self' 'unsafe-eval' 'unsafe-inline' https://secure.walletconnect.org;
+              script-src 'self' 'unsafe-eval' 'unsafe-inline' https://secure.walletconnect.org https://secure.walletconnect.com https://*.walletconnect.org https://*.walletconnect.com;
               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
               font-src 'self' https://fonts.gstatic.com;
-              img-src 'self' data: https://api.web3modal.com https://api.web3modal.org;
-              connect-src 'self' https://secure.walletconnect.org wss://*.walletconnect.org https://api.web3modal.com https://api.web3modal.org;
-              frame-src 'self' https://secure.walletconnect.org;
-              frame-ancestors 'self' ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'};
+              img-src 'self' data: https://api.web3modal.com https://api.web3modal.org https://*.walletconnect.org https://*.walletconnect.com;
+              connect-src 'self' https://secure.walletconnect.org https://secure.walletconnect.com wss://*.walletconnect.org wss://*.walletconnect.com https://api.web3modal.com https://api.web3modal.org https://rpc.walletconnect.com;
+              frame-src 'self' https://secure.walletconnect.org https://secure.walletconnect.com https://*.walletconnect.org https://*.walletconnect.com;
             `.replace(/\s{2,}/g, ' ').trim(),
           },
         ],
