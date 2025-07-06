@@ -2,31 +2,48 @@
 
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useAccount, useDisconnect, useChainId } from "wagmi";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { blockdagPrimordial } from "@/chains/blockdag";
+import { projectId } from "@/configs/wagmi";
+import { ClientOnly } from "./ClientOnly";
 
-export default function ConnectButton() {
+function ConnectButtonInner() {
   const { open } = useWeb3Modal();
   const { address, isConnected, isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
   const chainId = useChainId();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const isCorrectNetwork = chainId === blockdagPrimordial.id;
+  const hasValidProjectId = projectId && projectId.length === 32;
 
   const handleConnect = async () => {
+    if (!hasValidProjectId) {
+      setError("Invalid WalletConnect Project ID");
+      return;
+    }
+
     setIsLoading(true);
+    setError(null);
+    
     try {
       await open();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to open Web3Modal:", error);
+      setError("Failed to connect wallet");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDisconnect = () => {
-    disconnect();
+    try {
+      disconnect();
+      setError(null);
+    } catch (error) {
+      console.error("Failed to disconnect:", error);
+    }
   };
 
   const switchNetwork = async () => {
@@ -41,11 +58,21 @@ export default function ConnectButton() {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
+  // Project ID validation error
+  if (!hasValidProjectId) {
+    return (
+      <div className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold min-w-[160px] text-center cursor-not-allowed">
+        Setup Required
+      </div>
+    );
+  }
+
+  // Connected state
   if (isConnected && address) {
     return (
       <div className="flex flex-col gap-3">
-        {/* Wallet Address Display */}
-        <div className="flex items-center gap-3">
+        {/* Wallet Info */}
+        <div className="flex items-center gap-3 flex-wrap">
           <div className={`px-4 py-2 rounded-lg border text-sm font-mono ${
             isCorrectNetwork 
               ? 'bg-green-900/20 text-green-400 border-green-800' 
@@ -71,18 +98,18 @@ export default function ConnectButton() {
               <span className="text-yellow-400 font-semibold">Wrong Network</span>
             </div>
             <p className="text-yellow-200 text-sm mb-3">
-              Please switch to BlockDAG Primordial network to use this application.
+              Connected to chain {chainId}. Please switch to BlockDAG Primordial (Chain ID: 1043).
             </p>
             <button
               onClick={switchNetwork}
               className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
             >
-              Switch to BlockDAG
+              Switch Network
             </button>
           </div>
         )}
 
-        {/* Connection Success */}
+        {/* Success State */}
         {isCorrectNetwork && (
           <div className="bg-green-900/20 border border-green-800 rounded-lg p-4">
             <div className="flex items-center gap-2">
@@ -92,7 +119,7 @@ export default function ConnectButton() {
               <span className="text-green-400 font-semibold">Connected to BlockDAG</span>
             </div>
             <p className="text-green-200 text-sm mt-1">
-              You're ready to use the RWA Insurance Protocol!
+              Ready to use RWA Insurance Protocol!
             </p>
           </div>
         )}
@@ -100,25 +127,49 @@ export default function ConnectButton() {
     );
   }
 
+  // Connect button
   return (
-    <button
-      onClick={handleConnect}
-      disabled={isConnecting || isLoading}
-      className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 min-w-[160px] justify-center"
-    >
-      {isConnecting || isLoading ? (
-        <>
-          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-          Connecting...
-        </>
-      ) : (
-        <>
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clipRule="evenodd" />
-          </svg>
-          Connect Wallet
-        </>
+    <div className="flex flex-col gap-3">
+      <button
+        onClick={handleConnect}
+        disabled={isConnecting || isLoading}
+        className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 min-w-[160px] justify-center"
+      >
+        {isConnecting || isLoading ? (
+          <>
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            Connecting...
+          </>
+        ) : (
+          <>
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clipRule="evenodd" />
+            </svg>
+            Connect Wallet
+          </>
+        )}
+      </button>
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-900/20 border border-red-800 rounded-lg p-3">
+          <p className="text-red-400 text-sm">{error}</p>
+        </div>
       )}
-    </button>
+    </div>
+  );
+}
+
+export default function ConnectButton() {
+  return (
+    <ClientOnly 
+      fallback={
+        <div className="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold animate-pulse min-w-[160px] text-center">
+          Loading...
+        </div>
+      }
+    >
+      <ConnectButtonInner />
+    </ClientOnly>
   );
 }
