@@ -93,7 +93,7 @@ export const metadata: Metadata = {
   verification: {
     google: process.env.GOOGLE_VERIFICATION,
     yandex: process.env.YANDEX_VERIFICATION,
-    bing: process.env.BING_VERIFICATION,
+    // Remove 'bing' property as it's not supported in Next.js Verification type
   },
   alternates: {
     canonical: RWA_INSURANCE_SEO_CONFIG.siteUrl,
@@ -115,6 +115,10 @@ export const metadata: Metadata = {
     'web3:compatible': 'true',
     'insurance:type': 'RWA',
     'ai:powered': 'true',
+    // Add Bing verification as a custom meta tag instead
+    ...(process.env.BING_VERIFICATION && {
+      'msvalidate.01': process.env.BING_VERIFICATION,
+    }),
   },
 };
 
@@ -139,6 +143,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="dns-prefetch" href="//primordial.bdagscan.com" />
         <link rel="dns-prefetch" href="//rpc.primordial.bdagscan.com" />
+        {/* Add Bing verification meta tag manually if needed */}
+        {process.env.BING_VERIFICATION && (
+          <meta name="msvalidate.01" content={process.env.BING_VERIFICATION} />
+        )}
       </head>
       <body className={inter.className}>
         <Providers>{children}</Providers>
