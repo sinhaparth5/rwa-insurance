@@ -59,6 +59,28 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   },
+  // Add CSP headers
+  async headers() {
+    return [
+      {
+        source: '/(.*)', // Apply to all routes
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: `
+              default-src 'self';
+              script-src 'self' 'unsafe-eval' 'unsafe-inline' https://secure.walletconnect.org;
+              style-src 'self' 'unsafe-inline';
+              img-src 'self' data: https://api.web3modal.com https://secure.walletconnect.org;
+              connect-src 'self' https://secure.walletconnect.org wss://*.walletconnect.org https://api.web3modal.com;
+              frame-src 'self' https://secure.walletconnect.org;
+              frame-ancestors 'self' ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'};
+            `.replace(/\s{2,}/g, ' ').trim(),
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
