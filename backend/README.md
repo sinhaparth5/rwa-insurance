@@ -106,4 +106,3 @@ Database Schema (PostgreSQL/MongoDB):
 - policies (id, asset_id, owner, terms, smart_contract_address)
 - claims (id, policy_id, type, amount, status, evidence_ipfs)
 - ai_assessments (asset_id, risk_score, factors, timestamp)
-*/
