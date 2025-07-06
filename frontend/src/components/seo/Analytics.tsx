@@ -3,6 +3,14 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
+// Extend Window interface to include dataLayer and gtag
+declare global {
+  interface Window {
+    dataLayer: any[];
+    gtag: (...args: any[]) => void;
+  }
+}
+
 export function Analytics() {
   const pathname = usePathname();
 
@@ -26,13 +34,13 @@ export function Analytics() {
       });
 
       // Make gtag available globally
-      (window as any).gtag = gtag;
+      window.gtag = gtag;
     }
   }, []);
 
   useEffect(() => {
-    if ((window as any).gtag) {
-      (window as any).gtag('config', process.env.NEXT_PUBLIC_GA_ID, {
+    if (window.gtag) {
+      window.gtag('config', process.env.NEXT_PUBLIC_GA_ID, {
         page_title: document.title,
         page_location: window.location.href,
       });
