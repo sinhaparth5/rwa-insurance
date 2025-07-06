@@ -1,7 +1,8 @@
 "use client";
-import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
 
+import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
 import { cookieStorage, createStorage } from "wagmi";
+import { walletConnect } from "wagmi/connectors";
 import { morphHolesky } from "viem/chains";
 
 // Get projectId at https://cloud.walletconnect.com
@@ -27,4 +28,11 @@ export const config = defaultWagmiConfig({
   storage: createStorage({
     storage: cookieStorage,
   }),
+  connectors: [
+    walletConnect({
+      projectId,
+      metadata,
+      showQrModal: false,
+    })
+  ]
 });

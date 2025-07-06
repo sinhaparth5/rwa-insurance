@@ -1,37 +1,36 @@
 'use client';
 
-import { createWeb3Modal } from '@web3modal/wagmi/react';
-import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
-import { WagmiProvider } from 'wagmi';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { blockdagPrimordial } from '../chains';
+import Web3Provider from '@/providers/Web3Provider';
+import { ErrorBoundary } from 'react-error-boundary';
 
-const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
-
-const metadata = {
-  name: 'BlockDAG Starter Kit',
-  description: 'BlockDAG Starter Kit Web3 App',
-  url: 'https://blockdag.network', 
-  icons: ['https://avatars.githubusercontent.com/u/37784886']
-};
-
-const chains = [blockdagPrimordial] as const;
-const config = defaultWagmiConfig({
-  chains,
-  projectId,
-  metadata,
-});
-
-createWeb3Modal({ wagmiConfig: config, projectId });
-
-const queryClient = new QueryClient();
+function ErrorFallback({ error, resetErrorBoundary }: any) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-red-900 via-red-800 to-red-900 flex items-center justify-center p-8">
+      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-red-500/20 text-center max-w-md">
+        <h2 className="text-2xl font-bold text-white mb-4">Something went wrong</h2>
+        <p className="text-red-200 mb-6 text-sm">{error.message}</p>
+        <button
+          onClick={resetErrorBoundary}
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors"
+        >
+          Try again
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onError={(error, errorInfo) => {
+        console.error('App Error:', error, errorInfo);
+      }}
+    >
+      <Web3Provider>
         {children}
-      </QueryClientProvider>
-    </WagmiProvider>
+      </Web3Provider>
+    </ErrorBoundary>
   );
-} 
+}
