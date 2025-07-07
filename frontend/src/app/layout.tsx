@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
+import { headers } from "next/headers";
+import ContextProvider from '@/context'
 import { RWA_INSURANCE_SEO_CONFIG } from "@/lib/seo/config";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { StructuredDataGenerator } from "@/lib/seo/structured-data";
@@ -93,7 +94,6 @@ export const metadata: Metadata = {
   verification: {
     google: process.env.GOOGLE_VERIFICATION,
     yandex: process.env.YANDEX_VERIFICATION,
-    // Remove 'bing' property as it's not supported in Next.js Verification type
   },
   alternates: {
     canonical: RWA_INSURANCE_SEO_CONFIG.siteUrl,
@@ -115,18 +115,19 @@ export const metadata: Metadata = {
     'web3:compatible': 'true',
     'insurance:type': 'RWA',
     'ai:powered': 'true',
-    // Add Bing verification as a custom meta tag instead
+    // Add Bing verification if available
     ...(process.env.BING_VERIFICATION && {
       'msvalidate.01': process.env.BING_VERIFICATION,
     }),
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookies = (await headers()).get('cookie')
   const structuredDataGenerator = StructuredDataGenerator.getInstance();
   
   const organizationData = structuredDataGenerator.generateWebsiteData();
@@ -149,7 +150,9 @@ export default function RootLayout({
         )}
       </head>
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <ContextProvider cookies={cookies}>
+          {children}
+        </ContextProvider>
         <Analytics />
         <WebVitals />
       </body>

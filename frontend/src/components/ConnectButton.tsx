@@ -1,70 +1,54 @@
 "use client";
 
-import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { useAccount, useDisconnect, useChainId } from "wagmi";
-import { useState, useEffect } from "react";
-import { blockdagPrimordial } from "@/chains/blockdag";
-import { projectId } from "@/configs/wagmi";
-import { ClientOnly } from "./ClientOnly";
+import { useAppKit } from '@reown/appkit/react'
+import { useAccount, useDisconnect, useChainId } from 'wagmi'
+import { useState } from 'react'
+import { blockdagPrimordial } from '@/chains/blockdag'
+import { ClientOnly } from './ClientOnly'
 
 function ConnectButtonInner() {
-  const { open } = useWeb3Modal();
-  const { address, isConnected, isConnecting } = useAccount();
-  const { disconnect } = useDisconnect();
-  const chainId = useChainId();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { open } = useAppKit()
+  const { address, isConnected, isConnecting } = useAccount()
+  const { disconnect } = useDisconnect()
+  const chainId = useChainId()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const isCorrectNetwork = chainId === blockdagPrimordial.id;
-  const hasValidProjectId = projectId && projectId.length === 32;
+  const isCorrectNetwork = chainId === blockdagPrimordial.id
 
   const handleConnect = async () => {
-    if (!hasValidProjectId) {
-      setError("Invalid WalletConnect Project ID");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
     
     try {
-      await open();
+      await open()
     } catch (error: any) {
-      console.error("Failed to open Web3Modal:", error);
-      setError("Failed to connect wallet");
+      console.error('Failed to open AppKit:', error)
+      setError('Failed to connect wallet')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleDisconnect = () => {
     try {
-      disconnect();
-      setError(null);
+      disconnect()
+      setError(null)
     } catch (error) {
-      console.error("Failed to disconnect:", error);
+      console.error('Failed to disconnect:', error)
     }
-  };
+  }
 
   const switchNetwork = async () => {
     try {
-      await open({ view: 'Networks' });
+      await open({ view: 'Networks' })
     } catch (error) {
-      console.error("Failed to switch network:", error);
+      console.error('Failed to switch network:', error)
     }
-  };
+  }
 
   const formatAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-  };
-
-  // Project ID validation error
-  if (!hasValidProjectId) {
-    return (
-      <div className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold min-w-[160px] text-center cursor-not-allowed">
-        Setup Required
-      </div>
-    );
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`
   }
 
   // Connected state
@@ -124,7 +108,7 @@ function ConnectButtonInner() {
           </div>
         )}
       </div>
-    );
+    )
   }
 
   // Connect button
@@ -157,7 +141,7 @@ function ConnectButtonInner() {
         </div>
       )}
     </div>
-  );
+  )
 }
 
 export default function ConnectButton() {
@@ -171,5 +155,5 @@ export default function ConnectButton() {
     >
       <ConnectButtonInner />
     </ClientOnly>
-  );
+  )
 }
