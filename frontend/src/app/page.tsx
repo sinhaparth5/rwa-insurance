@@ -11,6 +11,9 @@ import { LayoutPanelTopIcon } from '@/components/ui/layout-panel-top';
 import { RocketIcon } from '@/components/ui/rocket';
 import { ShimmeringText } from '@/components/animate-ui/text/shimmering';
 import { GradientText } from '@/components/animate-ui/text/gradient';
+import Threads from '@/Backgrounds/Threads/Threads';
+import SpotlightCard from '@/Components/SpotlightCard/SpotlightCard';
+import GlareHover from '@/Animations/GlareHover/GlareHover';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateRWAMetadata({
@@ -60,7 +63,6 @@ export default function HomePage() {
   return (
     <>
       <StructuredData data={[faqData, breadcrumbData]} id="homepage-structured-data" />
-      
       <main className="flex min-h-screen flex-col bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
         {/* Hero Section */}
         <section className="text-white py-20">
@@ -94,6 +96,14 @@ export default function HomePage() {
               Comprehensive Asset Protection
             </h2>
             <div className="grid md:grid-cols-3 gap-8 mb-12">
+              <GlareHover 
+                glareColor="#ffffff"
+    glareOpacity={0.3}
+    glareAngle={-30}
+    glareSize={300}
+    transitionDuration={800}
+    playOnce={false}
+    >
               <div className="text-center text-white bg-white/5 backdrop-blur-sm rounded-xl p-8">
                 <div className="text-5xl mb-4">🚗</div>
                 <h3 className="text-2xl font-semibold mb-4">Vehicle Insurance</h3>
@@ -108,6 +118,7 @@ export default function HomePage() {
                   <li>• Usage-based premiums</li>
                 </ul>
               </div>
+              </GlareHover>
               <div className="text-center text-white bg-white/5 backdrop-blur-sm rounded-xl p-8">
                 <div className="text-5xl mb-4">🏠</div>
                 <h3 className="text-2xl font-semibold mb-4">Property Insurance</h3>
