@@ -9,6 +9,8 @@ import { ShieldCheckIcon } from '@/components/ui/shield-check';
 import { ClockIcon } from '@/components/ui/clock';
 import { LayoutPanelTopIcon } from '@/components/ui/layout-panel-top';
 import { RocketIcon } from '@/components/ui/rocket';
+import { ShimmeringText } from '@/components/animate-ui/text/shimmering';
+import { GradientText } from '@/components/animate-ui/text/gradient';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateRWAMetadata({
@@ -63,9 +65,10 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="text-white py-20">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <h1><GradientText text="AI-Powered RWA Insurance Protocol" /></h1>
+            {/* <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               AI-Powered RWA Insurance Protocol
-            </h1>
+            </h1> */}
             <p className="text-xl mb-8 text-blue-100 max-w-4xl mx-auto">
               Revolutionary insurance platform for tokenized real-world assets. 
               Protect your vehicles, properties, and art with AI risk assessment, 

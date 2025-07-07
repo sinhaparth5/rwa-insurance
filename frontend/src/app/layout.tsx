@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { headers } from "next/headers";
 import ContextProvider from '@/context'
@@ -9,7 +9,7 @@ import { StructuredDataGenerator } from "@/lib/seo/structured-data";
 import { Analytics } from "@/components/seo/Analytics";
 import { WebVitals } from "@/components/seo/WebVitals";
 
-const inter = Inter({ subsets: ["latin"] });
+const plus_jakarta_sans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -149,7 +149,7 @@ export default async function RootLayout({
           <meta name="msvalidate.01" content={process.env.BING_VERIFICATION} />
         )}
       </head>
-      <body className={inter.className}>
+      <body className={plus_jakarta_sans.className}>
         <ContextProvider cookies={cookies}>
           {children}
         </ContextProvider>
