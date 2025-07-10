@@ -45,6 +45,7 @@ const nextConfig = {
   
   experimental: {
     esmExternals: 'loose',
+    optimizeCss: true,
   },
   
   swcMinify: true,
@@ -59,14 +60,9 @@ const nextConfig = {
     '@walletconnect/core',
     '@walletconnect/utils',
   ],
-  
-  // Handle missing environment variables gracefully
   env: {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   },
-  
-  // Remove CSP headers to allow WalletConnect to work properly
-  // WalletConnect has its own CSP that blocks unauthorized domains
 };
 
 export default nextConfig;
