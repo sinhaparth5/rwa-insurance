@@ -8,6 +8,7 @@ import { StructuredData } from "@/components/seo/StructuredData";
 import { StructuredDataGenerator } from "@/lib/seo/structured-data";
 import { Analytics } from "@/components/seo/Analytics";
 import { WebVitals } from "@/components/seo/WebVitals";
+import { Provider } from "@/components/ui/provider";
 
 const plus_jakarta_sans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
@@ -18,7 +19,7 @@ export const viewport: Viewport = {
   userScalable: true,
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#070E1B' },
+    { media: '(prefers-color-scheme: dark)', color: '#ffffff' }, // Force white even for dark preference
   ],
 };
 
@@ -107,8 +108,8 @@ export const metadata: Metadata = {
     'apple-mobile-web-app-status-bar-style': 'default',
     'apple-mobile-web-app-title': RWA_INSURANCE_SEO_CONFIG.app.name,
     'application-name': RWA_INSURANCE_SEO_CONFIG.app.name,
-    'msapplication-TileColor': '#000000',
-    'theme-color': '#000000',
+    'msapplication-TileColor': '#ffffff', // White instead of black
+    'theme-color': '#ffffff', // White instead of black
     'blockchain:network': 'BlockDAG',
     'blockchain:symbol': 'BDAG',
     'blockchain:chainId': '1043',
@@ -150,11 +151,13 @@ export default async function RootLayout({
         )}
       </head>
       <body className={plus_jakarta_sans.className}>
-        <ContextProvider cookies={cookies}>
-          {children}
-        </ContextProvider>
-        <Analytics />
-        <WebVitals />
+        <Provider>
+          <ContextProvider cookies={cookies}>
+            {children}
+          </ContextProvider>
+          <Analytics />
+          <WebVitals />
+        </Provider>
       </body>
     </html>
   );
