@@ -1,8 +1,9 @@
 "use client";
 
 import { useWalletAuth } from '@/hooks/useWalletAuth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { RWAAsset, InsurancePolicy, Claim } from '@/types/insurance';
+import Image from 'next/image';
 
 export function InsuranceDashboard() {
   const { userSession } = useWalletAuth();
@@ -11,19 +12,14 @@ export function InsuranceDashboard() {
   const [claims, setClaims] = useState<Claim[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // @TODO this useEffect is demo, need to update when the API is created
-  useEffect(() => {
-    if (userSession?.address) {
-      fetchUserData();
-    }
-  }, [userSession]);
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
+    if (!userSession?.address) return;
+    
     try {
       const [assetsRes, policiesRes, claimsRes] = await Promise.all([
-        fetch(`/api/assets?owner=${userSession!.address}`),
-        fetch(`/api/policies?owner=${userSession!.address}`),
-        fetch(`/api/claims?owner=${userSession!.address}`),
+        fetch(`/api/assets?owner=${userSession.address}`),
+        fetch(`/api/policies?owner=${userSession.address}`),
+        fetch(`/api/claims?owner=${userSession.address}`),
       ]);
 
       const [assetsData, policiesData, claimsData] = await Promise.all([
@@ -40,7 +36,13 @@ export function InsuranceDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userSession?.address]);
+
+  useEffect(() => {
+    if (userSession?.address) {
+      fetchUserData();
+    }
+  }, [userSession?.address, fetchUserData]);
 
   if (!userSession?.isConnected) {
     return (
@@ -101,7 +103,13 @@ export function InsuranceDashboard() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {assets.map((asset) => (
                 <div key={asset.tokenId} className="border rounded-lg p-4">
-                  <img src={asset.metadata.image} alt={asset.metadata.name} className="w-full h-32 object-cover rounded mb-4" />
+                  <Image 
+                    src={asset.metadata.image} 
+                    alt={asset.metadata.name} 
+                    width={400}
+                    height={128}
+                    className="w-full h-32 object-cover rounded mb-4" 
+                  />
                   <h3 className="font-semibold">{asset.metadata.name}</h3>
                   <p className="text-sm text-gray-600 mb-2">{asset.metadata.description}</p>
                   <div className="flex justify-between items-center">
