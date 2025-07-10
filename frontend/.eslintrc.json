@@ -6,6 +6,7 @@
     "prefer-const": "off",
     "react/no-unescaped-entities": "off",
     "react-hooks/exhaustive-deps": "warn",
-    "@next/next/no-img-element": "warn"
+    "@next/next/no-img-element": "warn",
+    "@typescript-eslint/no-empty-object-type": "off"
   }
 }
