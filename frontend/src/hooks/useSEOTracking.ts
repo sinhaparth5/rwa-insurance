@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { SEOAnalytics } from '@/lib/seo/analytics';
 
@@ -13,6 +13,16 @@ interface SEOTrackingProps {
 export function useSEOTracking(props: SEOTrackingProps = {}) {
   const pathname = usePathname();
   const seoAnalytics = SEOAnalytics.getInstance();
+
+  // Helper function to determine page type from pathname
+  const getPageTypeFromPath = useCallback((path: string): string => {
+    if (path === '/') return 'homepage';
+    if (path.startsWith('/dashboard')) return 'dashboard';
+    if (path.startsWith('/blog')) return 'blog';
+    if (path.startsWith('/docs')) return 'documentation';
+    if (path.startsWith('/assets')) return 'asset';
+    return 'page';
+  }, []);
 
   useEffect(() => {
     // Track page view with SEO metadata
@@ -28,17 +38,7 @@ export function useSEOTracking(props: SEOTrackingProps = {}) {
 
     // Initialize scroll tracking
     seoAnalytics.trackScrollDepth();
-  }, [pathname, props]);
-
-  // Helper function to determine page type from pathname
-  function getPageTypeFromPath(path: string): string {
-    if (path === '/') return 'homepage';
-    if (path.startsWith('/dashboard')) return 'dashboard';
-    if (path.startsWith('/blog')) return 'blog';
-    if (path.startsWith('/docs')) return 'documentation';
-    if (path.startsWith('/assets')) return 'asset';
-    return 'page';
-  }
+  }, [pathname, props.pageType, props.category, props.userType, getPageTypeFromPath, seoAnalytics]);
 
   return {
     trackSearch: seoAnalytics.trackSiteSearch.bind(seoAnalytics),
