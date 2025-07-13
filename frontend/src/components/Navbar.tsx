@@ -15,6 +15,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useColorModeValue } from "@/components/ui/color-mode";
+import { Image } from "@chakra-ui/react";
 
 const Navbar: FC = () => {
   const pathname = usePathname();
@@ -100,15 +101,22 @@ const Navbar: FC = () => {
           {/* Logo */}
           <Box>
             <Link href="/">
-              <Text
-                fontWeight="bold" 
-                fontSize={{ base: "lg", md: "xl" }}
-                color={useColorModeValue("cyan.900", "cyan.100")}
-                _hover={{ color: activeColor }}
-                transition="color 0.2s"
-              >
-                RWA Insurance Protocol
-              </Text>
+              <span className="flex items-center flex-column">
+                <Image
+                  src="/logo.png"
+                  alt="InsureGenie Logo"
+                  height="40px"
+                />
+                <Text
+                  fontWeight="bold" 
+                  fontSize={{ base: "lg", md: "xl" }}
+                  color={useColorModeValue("cyan.900", "cyan.100")}
+                  _hover={{ color: activeColor }}
+                  transition="color 0.2s"
+                >
+                InsureGenie
+                </Text>
+              </span>
             </Link>
           </Box>
 
