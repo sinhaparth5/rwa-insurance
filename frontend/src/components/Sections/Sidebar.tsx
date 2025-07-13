@@ -169,7 +169,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         <FiMenu />
       </IconButton>
 
-      <Text
+      <Box
         display={{ base: 'flex', md: 'none' }}
         fontSize="2xl"
         fontFamily="monospace"
@@ -195,7 +195,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               </span>
             </Link>
           </Box>
-      </Text>
+      </Box>
 
       <HStack gap={{ base: '0', md: '6' }}>
         <IconButton size="lg" variant="ghost" aria-label="open menu">
