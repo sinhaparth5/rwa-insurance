@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rwa-insurance.com';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dag.astrareconslab.com';
 
 async function fetchBlogPosts() {
   try {
