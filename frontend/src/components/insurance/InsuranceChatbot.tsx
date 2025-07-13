@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWalletAuth } from '@/hooks/useWalletAuth';
 import type { ChatMessage } from '@/types/chatbot';
 
@@ -16,6 +16,17 @@ export function InsuranceChatbot() {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  // Fix hydration error by ensuring timestamps only render on client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const formatTime = (date: Date) => {
+    if (!isClient) return ''; // Return empty string during SSR
+    return date.toLocaleTimeString();
+  };
 
   const sendMessage = async () => {
     if (!inputValue.trim() || !userSession?.address) return;
@@ -100,8 +111,8 @@ export function InsuranceChatbot() {
                 : 'bg-gray-100 text-gray-800'
             }`}>
               <p>{message.content}</p>
-              <small className="text-xs opacity-75">
-                {message.timestamp.toLocaleTimeString()}
+              <small className="text-xs opacity-75" suppressHydrationWarning>
+                {formatTime(message.timestamp)}
               </small>
             </div>
           </div>
