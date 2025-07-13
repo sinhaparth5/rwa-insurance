@@ -1,8 +1,8 @@
 // lib/seo/config.ts
 export const RWA_INSURANCE_SEO_CONFIG = {
   siteName: 'RWA Insurance Protocol',
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://rwa-insurance.com',
-  defaultTitle: 'AI-Powered RWA Insurance Protocol - Insure Tokenized Assets on BlockDAG',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://dag.astrareconslab.com',
+  defaultTitle: 'InsureGenie - Insure Tokenized Assets on BlockDAG',
   titleTemplate: '%s | RWA Insurance Protocol',
   defaultDescription: 'Revolutionary AI-powered insurance platform for tokenized real-world assets. Insure vehicles, properties, and art with smart contracts, automated claims, and transparent risk assessment on BlockDAG blockchain.',
   defaultImage: '/images/og-rwa-insurance.jpg',
@@ -19,12 +19,12 @@ export const RWA_INSURANCE_SEO_CONFIG = {
   
   contact: {
     email: 'support@rwa-insurance.com',
-    support: 'https://support.rwa-insurance.com',
+    support: 'https://dag.astrareconslab.com/support',
   },
   
   organization: {
     name: 'RWA Insurance Protocol',
-    url: 'https://rwa-insurance.com',
+    url: 'https://dag.astrareconslab.com',
     logo: '/images/rwa-logo.png',
     description: 'Leading AI-powered insurance platform for tokenized real-world assets',
     foundingDate: '2024',
