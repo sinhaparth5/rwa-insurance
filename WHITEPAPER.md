@@ -1,4 +1,12 @@
-t
+# AI-Powered RWA Insurance Protocol
+## Decentralized Insurance for Tokenized Real-World Assets on BlockDAG
+
+**Version 1.0**  
+**Date: July 2025**
+
+---
+
+## Abstract
 
 The tokenization of real-world assets through NFTs has unlocked unprecedented opportunities for fractional ownership, enhanced liquidity, and innovative financial products. However, the insurance ecosystem for these tokenized assets faces several fundamental challenges:
 
