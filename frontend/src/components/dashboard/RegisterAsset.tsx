@@ -1,23 +1,22 @@
-// @TODO Need to fix this file
-
 "use client";
 
 import {
   Box,
   Button,
   Card,
-  FormControl,
-  FormLabel,
   Input,
-  Select,
   Textarea,
   VStack,
-  useToast,
   Heading,
   Text,
-  Alert,
-  AlertIcon
+  HStack,
+  Badge,
+  createListCollection
 } from "@chakra-ui/react";
+import { Select } from "@chakra-ui/react";
+import { Field } from "@/components/ui/field";
+import { Alert } from "@/components/ui/alert";
+import { toaster } from "@/components/ui/toaster";
 import { useState } from "react";
 import { useAssetRegistry } from "@/hooks/useContracts";
 import { useWallet } from "@/hooks/useWallet";
@@ -25,7 +24,6 @@ import { useWallet } from "@/hooks/useWallet";
 export const RegisterAsset = () => {
   const { address, isConnected } = useWallet();
   const { registerAsset, isLoading } = useAssetRegistry();
-  const toast = useToast();
   
   const [formData, setFormData] = useState({
     assetType: "",
@@ -35,16 +33,26 @@ export const RegisterAsset = () => {
     metadataURI: ""
   });
 
+  // Create collection for Chakra UI v3 Select
+  const assetTypes = createListCollection({
+    items: [
+      { value: "real_estate", label: "Real Estate" },
+      { value: "vehicle", label: "Vehicle" },
+      { value: "artwork", label: "Artwork" },
+      { value: "jewelry", label: "Jewelry" },
+      { value: "electronics", label: "Electronics" }
+    ]
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!isConnected) {
-      toast({
+      toaster.create({
         title: "Wallet Not Connected",
         description: "Please connect your wallet first",
-        status: "error",
+        type: "error",
         duration: 5000,
-        isClosable: true,
       });
       return;
     }
@@ -58,12 +66,11 @@ export const RegisterAsset = () => {
         formData.metadataURI
       );
       
-      toast({
+      toaster.create({
         title: "Asset Registered Successfully!",
         description: "Your asset has been added to the registry",
-        status: "success",
+        type: "success",
         duration: 5000,
-        isClosable: true,
       });
       
       // Reset form
@@ -75,107 +82,151 @@ export const RegisterAsset = () => {
         metadataURI: ""
       });
     } catch (error: any) {
-      toast({
+      toaster.create({
         title: "Registration Failed",
         description: error?.message || "Failed to register asset",
-        status: "error",
+        type: "error",
         duration: 5000,
-        isClosable: true,
       });
     }
   };
 
   if (!isConnected) {
     return (
-      <Card.Root>
-        <Card.Body>
-          <Alert status="warning">
-            <AlertIcon />
-            Please connect your wallet to register assets
-          </Alert>
-        </Card.Body>
-      </Card.Root>
+      <Box>
+        <Heading size="lg" mb={6}>Register New Asset</Heading>
+        <Card.Root>
+          <Card.Body>
+            <Alert.Root status="warning">
+              <Alert.Indicator />
+              <Alert.Title>Please connect your wallet to register assets</Alert.Title>
+            </Alert.Root>
+          </Card.Body>
+        </Card.Root>
+      </Box>
     );
   }
 
   return (
-    <Card.Root>
-      <Card.Header>
-        <Heading size="md">Register New Asset</Heading>
-        <Text color="gray.600">Add your real-world asset to the registry</Text>
-      </Card.Header>
+    <Box>
+      <Heading size="lg" mb={6}>Register New Asset</Heading>
       
-      <Card.Body>
-        <form onSubmit={handleSubmit}>
-          <VStack gap={4}>
-            <FormControl isRequired>
-              <FormLabel>Asset Type</FormLabel>
-              <Select
-                value={formData.assetType}
-                onChange={(e) => setFormData({...formData, assetType: e.target.value})}
-                placeholder="Select asset type"
-              >
-                <option value="real_estate">Real Estate</option>
-                <option value="vehicle">Vehicle</option>
-                <option value="artwork">Artwork</option>
-                <option value="jewelry">Jewelry</option>
-                <option value="electronics">Electronics</option>
-              </Select>
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Description</FormLabel>
-              <Textarea
-                value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
-                placeholder="Describe your asset in detail..."
-                rows={3}
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Estimated Value (BDAG)</FormLabel>
-              <Input
-                type="number"
-                step="0.001"
-                value={formData.estimatedValue}
-                onChange={(e) => setFormData({...formData, estimatedValue: e.target.value})}
-                placeholder="0.000"
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Document Hash (IPFS)</FormLabel>
-              <Input
-                value={formData.documentHash}
-                onChange={(e) => setFormData({...formData, documentHash: e.target.value})}
-                placeholder="QmXxx... (optional)"
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Metadata URI</FormLabel>
-              <Input
-                value={formData.metadataURI}
-                onChange={(e) => setFormData({...formData, metadataURI: e.target.value})}
-                placeholder="https://... (optional)"
-              />
-            </FormControl>
-
-            <Button
-              type="submit"
-              colorScheme="cyan"
-              size="lg"
-              w="full"
-              isLoading={isLoading}
-              loadingText="Registering Asset..."
-              isDisabled={!formData.assetType || !formData.description || !formData.estimatedValue}
-            >
-              Register Asset
-            </Button>
+      <Card.Root maxW="2xl">
+        <Card.Header>
+          <VStack align="start" gap={2}>
+            <Heading size="md">Add Your Real-World Asset</Heading>
+            <Text color="gray.600">
+              Register your asset to make it eligible for blockchain insurance coverage
+            </Text>
           </VStack>
-        </form>
-      </Card.Body>
-    </Card.Root>
+        </Card.Header>
+        
+        <Card.Body>
+          <form onSubmit={handleSubmit}>
+            <VStack gap={6} align="stretch">
+              
+              {/* Asset Type */}
+              <Field label="Asset Type" required>
+                <Select.Root
+                  collection={assetTypes}
+                  value={formData.assetType ? [formData.assetType] : []}
+                  onValueChange={(e) => setFormData({ ...formData, assetType: e.value[0] || "" })}
+                  size="md"
+                >
+                  <Select.Label>Asset Type</Select.Label>
+                  <Select.Control>
+                    <Select.Trigger>
+                      <Select.ValueText placeholder="Select asset type" />
+                    </Select.Trigger>
+                  </Select.Control>
+                  <Select.Positioner>
+                    <Select.Content>
+                      {assetTypes.items.map((item) => (
+                        <Select.Item key={item.value} item={item}>
+                          {item.label}
+                        </Select.Item>
+                      ))}
+                    </Select.Content>
+                  </Select.Positioner>
+                </Select.Root>
+              </Field>
+
+              {/* Description */}
+              <Field label="Description" required>
+                <Textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  placeholder="Provide a detailed description of your asset..."
+                  rows={4}
+                  resize="vertical"
+                />
+              </Field>
+
+              {/* Estimated Value */}
+              <Field label="Estimated Value" required>
+                <Input
+                  type="number"
+                  step="0.001"
+                  value={formData.estimatedValue}
+                  onChange={(e) => setFormData({...formData, estimatedValue: e.target.value})}
+                  placeholder="0.000"
+                />
+                <Text fontSize="sm" color="gray.600" mt={1}>
+                  Value in BDAG tokens
+                </Text>
+              </Field>
+
+              {/* Document Hash */}
+              <Field label="Document Hash (IPFS)" helperText="Upload supporting documents to IPFS and provide the hash">
+                <Input
+                  value={formData.documentHash}
+                  onChange={(e) => setFormData({...formData, documentHash: e.target.value})}
+                  placeholder="QmXxx... (optional)"
+                />
+              </Field>
+
+              {/* Metadata URI */}
+              <Field label="Metadata URI" helperText="Additional metadata or external link">
+                <Input
+                  value={formData.metadataURI}
+                  onChange={(e) => setFormData({...formData, metadataURI: e.target.value})}
+                  placeholder="https://... (optional)"
+                />
+              </Field>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                colorScheme="cyan"
+                size="lg"
+                loading={isLoading}
+                loadingText="Registering Asset..."
+                disabled={!formData.assetType || !formData.description || !formData.estimatedValue}
+              >
+                Register Asset
+              </Button>
+
+              {/* Info Card */}
+              <Card.Root bg="cyan.50" borderColor="cyan.200">
+                <Card.Body>
+                  <VStack align="start" gap={3}>
+                    <HStack>
+                      <Badge colorScheme="cyan">Info</Badge>
+                      <Text fontWeight="semibold" fontSize="sm">What happens next?</Text>
+                    </HStack>
+                    <VStack align="start" gap={1} fontSize="sm" color="gray.700">
+                      <Text>• Your asset will be submitted for verification</Text>
+                      <Text>• Authorized verifiers will review your submission</Text>
+                      <Text>• Once verified, you can purchase insurance coverage</Text>
+                      <Text>• You'll receive notifications about the verification status</Text>
+                    </VStack>
+                  </VStack>
+                </Card.Body>
+              </Card.Root>
+            </VStack>
+          </form>
+        </Card.Body>
+      </Card.Root>
+    </Box>
   );
 };
