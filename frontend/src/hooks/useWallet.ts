@@ -1,14 +1,14 @@
 "use client";
 
 import { useAccount, useConnect, useDisconnect, useChainId, useSwitchChain } from "wagmi";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
+// import { useWeb3Modal } from "@web3modal/wagmi/react";  // Comment this out
 import { blockdagPrimordial } from "@/chains/blockdag";
 import { useState, useCallback } from "react";
 
 export function useWallet() {
   const { address, isConnected, isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
-  const { open } = useWeb3Modal();
+  const { connect, connectors } = useConnect(); // Use this instead
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
   const [isLoading, setIsLoading] = useState(false);
@@ -18,13 +18,17 @@ export function useWallet() {
   const connectWallet = useCallback(async () => {
     setIsLoading(true);
     try {
-      await open();
+      // Use injected connector (MetaMask) directly
+      const injectedConnector = connectors.find(c => c.type === 'injected');
+      if (injectedConnector) {
+        await connect({ connector: injectedConnector });
+      }
     } catch (error) {
       console.error("Failed to connect wallet:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [open]);
+  }, [connect, connectors]);
 
   const disconnectWallet = useCallback(() => {
     disconnect();
@@ -35,10 +39,8 @@ export function useWallet() {
       await switchChain({ chainId: blockdagPrimordial.id });
     } catch (error) {
       console.error("Failed to switch network:", error);
-      // Fallback: open network selection
-      await open({ view: 'Networks' });
     }
-  }, [switchChain, open]);
+  }, [switchChain]);
 
   return {
     address,
