@@ -1,8 +1,8 @@
-// import { InsuranceDashboard } from '@/components/insurance/InsuranceDashboard';
-import SidebarWithHeader from '@/components/Sections/Sidebar';
+import { Metadata } from 'next';
+import SidebarWithDashboard from '@/components/dashboard/SidebarWithDashboard';
 import { generateRWAMetadata } from '@/utils/seo';
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
   return generateRWAMetadata({
     page: 'dashboard',
     data: {
@@ -13,8 +13,5 @@ export async function generateMetadata() {
 }
 
 export default function DashboardPage() {
-  // return <InsuranceDashboard />;
-  return (
-    <SidebarWithHeader />
-  )
+  return <SidebarWithDashboard />;
 }
