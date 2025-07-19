@@ -1,0 +1,77 @@
+{
+  "name": "2012 Porsche Panamera #3",
+  "description": "Tokenized 2012 Porsche Panamera - Sports vehicle on BlockDAG",
+  "image": "ipfs://QmN2UBGJQ91Ej3Ng6WcjaEi2TpRK35WTucZiY2hZoW11jz/image.jpg",
+  "external_url": "https://your-dapp.com/vehicle/3",
+  "attributes": [
+    {
+      "trait_type": "Make",
+      "value": "Porsche"
+    },
+    {
+      "trait_type": "Model",
+      "value": "Panamera"
+    },
+    {
+      "trait_type": "Year",
+      "value": 2012
+    },
+    {
+      "trait_type": "Category",
+      "value": "Sports"
+    },
+    {
+      "trait_type": "VIN",
+      "value": "WP0122090199117"
+    },
+    {
+      "trait_type": "Registration",
+      "value": "EF12 RGY"
+    },
+    {
+      "trait_type": "Current Value",
+      "value": "\u00a320,295"
+    },
+    {
+      "trait_type": "Location",
+      "value": "Mayfair"
+    },
+    {
+      "trait_type": "Postcode",
+      "value": "W1 9WI"
+    },
+    {
+      "trait_type": "Risk Level",
+      "value": "High"
+    },
+    {
+      "trait_type": "Mileage",
+      "value": "110,081 miles"
+    },
+    {
+      "trait_type": "Fuel Type",
+      "value": "Petrol"
+    },
+    {
+      "trait_type": "Transmission",
+      "value": "Automatic"
+    },
+    {
+      "trait_type": "Color",
+      "value": "White"
+    },
+    {
+      "trait_type": "Verification Status",
+      "value": "Verified"
+    }
+  ],
+  "vehicle_data": {
+    "vin": "WP0122090199117",
+    "registration": "EF12 RGY",
+    "postcode": "W1 9WI",
+    "owner_wallet": "0x3dc636d0ad3f80820c2c0745c920af18a9273d09",
+    "mint_date": "2023-06-14",
+    "last_valuation": 20295,
+    "insurance_eligible": true
+  }
+}
