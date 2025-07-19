@@ -56,6 +56,5 @@ tmp/
 *~
 
 # Project-specific directories (add as needed)
-data/
 logs/
 temp/
