@@ -1,4 +1,4 @@
-# RWA Insurance Backend
+# InsureGenie Backend
 
 ### Install and Run backend 
 
