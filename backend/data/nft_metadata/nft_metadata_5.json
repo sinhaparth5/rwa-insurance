@@ -1,0 +1,77 @@
+{
+  "name": "2017 Audi R8 #5",
+  "description": "Tokenized 2017 Audi R8 - Premium vehicle on BlockDAG",
+  "image": "ipfs://QmvcCRqMDD31119pdxSbvBve2o4PudRdA8BH9miSDLCDQm/image.jpg",
+  "external_url": "https://your-dapp.com/vehicle/5",
+  "attributes": [
+    {
+      "trait_type": "Make",
+      "value": "Audi"
+    },
+    {
+      "trait_type": "Model",
+      "value": "R8"
+    },
+    {
+      "trait_type": "Year",
+      "value": 2017
+    },
+    {
+      "trait_type": "Category",
+      "value": "Premium"
+    },
+    {
+      "trait_type": "VIN",
+      "value": "WAU179090669373"
+    },
+    {
+      "trait_type": "Registration",
+      "value": "AB17 GIO"
+    },
+    {
+      "trait_type": "Current Value",
+      "value": "\u00a343,623"
+    },
+    {
+      "trait_type": "Location",
+      "value": "Mayfair"
+    },
+    {
+      "trait_type": "Postcode",
+      "value": "W1 5FV"
+    },
+    {
+      "trait_type": "Risk Level",
+      "value": "High"
+    },
+    {
+      "trait_type": "Mileage",
+      "value": "149,330 miles"
+    },
+    {
+      "trait_type": "Fuel Type",
+      "value": "Diesel"
+    },
+    {
+      "trait_type": "Transmission",
+      "value": "Manual"
+    },
+    {
+      "trait_type": "Color",
+      "value": "Silver"
+    },
+    {
+      "trait_type": "Verification Status",
+      "value": "Verified"
+    }
+  ],
+  "vehicle_data": {
+    "vin": "WAU179090669373",
+    "registration": "AB17 GIO",
+    "postcode": "W1 5FV",
+    "owner_wallet": "0x51dc2e53c0ef8ec552ab8d642c185a9b21c47c40",
+    "mint_date": "2021-06-05",
+    "last_valuation": 43623,
+    "insurance_eligible": true
+  }
+}
