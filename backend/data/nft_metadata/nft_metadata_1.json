@@ -1,0 +1,77 @@
+{
+  "name": "2022 Toyota Camry #1",
+  "description": "Tokenized 2022 Toyota Camry - Standard vehicle on BlockDAG",
+  "image": "ipfs://QmSjXi29iw5oE5mDQbaQ6RM9yD3WXa6KXk348mL2z35vTH/image.jpg",
+  "external_url": "https://your-dapp.com/vehicle/1",
+  "attributes": [
+    {
+      "trait_type": "Make",
+      "value": "Toyota"
+    },
+    {
+      "trait_type": "Model",
+      "value": "Camry"
+    },
+    {
+      "trait_type": "Year",
+      "value": 2022
+    },
+    {
+      "trait_type": "Category",
+      "value": "Standard"
+    },
+    {
+      "trait_type": "VIN",
+      "value": "WBA220496644463"
+    },
+    {
+      "trait_type": "Registration",
+      "value": "DE22 BGX"
+    },
+    {
+      "trait_type": "Current Value",
+      "value": "\u00a311,680"
+    },
+    {
+      "trait_type": "Location",
+      "value": "Richmond"
+    },
+    {
+      "trait_type": "Postcode",
+      "value": "TW9 9NT"
+    },
+    {
+      "trait_type": "Risk Level",
+      "value": "Low"
+    },
+    {
+      "trait_type": "Mileage",
+      "value": "95,292 miles"
+    },
+    {
+      "trait_type": "Fuel Type",
+      "value": "Hybrid"
+    },
+    {
+      "trait_type": "Transmission",
+      "value": "Automatic"
+    },
+    {
+      "trait_type": "Color",
+      "value": "Grey"
+    },
+    {
+      "trait_type": "Verification Status",
+      "value": "Verified"
+    }
+  ],
+  "vehicle_data": {
+    "vin": "WBA220496644463",
+    "registration": "DE22 BGX",
+    "postcode": "TW9 9NT",
+    "owner_wallet": "0xc70bfd6fc4a68d5165ff6132e27d27448b968cfb",
+    "mint_date": "2024-05-06",
+    "last_valuation": 11680,
+    "insurance_eligible": true
+  }
+}

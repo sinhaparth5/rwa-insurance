@@ -1,0 +1,60 @@
+# Python-specific
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+*.pyc
+.pypirc
+
+# uv-specific
+.uv_cache/
+.uv_venv/
+.venv/
+venv/
+env/
+.virtualenv/
+.virtualenvs/
+
+# Common IDEs and editors
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Testing and coverage
+.coverage
+coverage.xml
+*.cover
+*.cache
+nosetests.xml
+pytest_cache/
+htmlcov/
+
+# Dependency lock files (optional, depending on whether you want to commit them)
+# uv.lock  # Uncomment if you don't want to commit uv's lock file
+
+# Logs and temporary files
+*.log
+*.log.*
+*.tmp
+tmp/
+
+# Other common ignores
+*.swp
+*.bak
+*.backup
+*~
+
+# Project-specific directories (add as needed)
+logs/
+temp/

@@ -1,0 +1,77 @@
+{
+  "name": "2021 Jaguar E-Type #4",
+  "description": "Tokenized 2021 Jaguar E-Type - Luxury vehicle on BlockDAG",
+  "image": "ipfs://QmxWTBqHWQCGbRgHVKQ51AdeMV1HCTWCxWrHVMrRDjgvoi/image.jpg",
+  "external_url": "https://your-dapp.com/vehicle/4",
+  "attributes": [
+    {
+      "trait_type": "Make",
+      "value": "Jaguar"
+    },
+    {
+      "trait_type": "Model",
+      "value": "E-Type"
+    },
+    {
+      "trait_type": "Year",
+      "value": 2021
+    },
+    {
+      "trait_type": "Category",
+      "value": "Luxury"
+    },
+    {
+      "trait_type": "VIN",
+      "value": "SAJ214114508916"
+    },
+    {
+      "trait_type": "Registration",
+      "value": "BC21 TYJ"
+    },
+    {
+      "trait_type": "Current Value",
+      "value": "\u00a342,983"
+    },
+    {
+      "trait_type": "Location",
+      "value": "Mayfair"
+    },
+    {
+      "trait_type": "Postcode",
+      "value": "W1 9NS"
+    },
+    {
+      "trait_type": "Risk Level",
+      "value": "High"
+    },
+    {
+      "trait_type": "Mileage",
+      "value": "107,471 miles"
+    },
+    {
+      "trait_type": "Fuel Type",
+      "value": "Diesel"
+    },
+    {
+      "trait_type": "Transmission",
+      "value": "Manual"
+    },
+    {
+      "trait_type": "Color",
+      "value": "Red"
+    },
+    {
+      "trait_type": "Verification Status",
+      "value": "Pending"
+    }
+  ],
+  "vehicle_data": {
+    "vin": "SAJ214114508916",
+    "registration": "BC21 TYJ",
+    "postcode": "W1 9NS",
+    "owner_wallet": "0x43d4ea0c049ec278b4f0296a9f19eecc4de5df94",
+    "mint_date": "2021-11-15",
+    "last_valuation": 42983,
+    "insurance_eligible": false
+  }
+}

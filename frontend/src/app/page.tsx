@@ -1,36 +1,73 @@
-"use client";
+import { Metadata } from 'next';
+import { Box } from '@chakra-ui/react';
+import { generateRWAMetadata } from '@/utils/seo';
+import { StructuredData } from '@/components/seo/StructuredData';
+import { StructuredDataGenerator } from '@/lib/seo/structured-data';
+import Navbar from '@/components/Navbar';
+import { HeroSection } from '@/components/Sections/HeroSection';
+import { FeaturesSection } from '@/components/Sections/FeaturesSection';
+import { AISection } from '@/components/Sections/AISection';
+import { ChatbotSection } from '@/components/Sections/ChatbotSection';
+import { TrustSecuritySection } from '@/components/Sections/TrustSecuritySection';
+import { CTASection } from '@/components/Sections/CTASection';
 
-import ConnectButton from "@/components/ConnectButton";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+export async function generateMetadata(): Promise<Metadata> {
+  return generateRWAMetadata({
+    page: 'home',
+    data: {
+      keywords: [
+        'rwa insurance protocol',
+        'ai powered insurance',
+        'tokenized asset protection',
+        'blockchain insurance platform',
+        'smart contract insurance'
+      ],
+    },
+  });
+}
 
-export default function Home() {
-  const { address, isConnected } = useAccount();
-  // const { open } = useWeb3Modal();
-  const { disconnect } = useDisconnect();
+export default function HomePage() {
+  const structuredDataGenerator = StructuredDataGenerator.getInstance();
+  
+  const faqData = structuredDataGenerator.generateFAQData([
+    {
+      question: 'What is RWA Insurance Protocol?',
+      answer: 'RWA Insurance Protocol is an AI-powered platform that provides insurance coverage for tokenized real-world assets like vehicles, properties, and art using blockchain technology and smart contracts.',
+    },
+    {
+      question: 'How does AI risk assessment work?',
+      answer: 'Our AI analyzes multiple data points including asset history, location factors, market conditions, and ownership patterns to calculate accurate risk scores and determine fair premium rates.',
+    },
+    {
+      question: 'What assets can I insure?',
+      answer: 'You can insure tokenized vehicles (cars, motorcycles, boats), real estate properties, art and collectibles, and other valuable physical assets that have been converted to NFTs.',
+    },
+    {
+      question: 'How are claims processed?',
+      answer: 'Claims are processed automatically using smart contracts and oracle verification. Once verified, payouts are made instantly in stablecoins or BDAG tokens directly to your wallet.',
+    },
+    {
+      question: 'What blockchain networks are supported?',
+      answer: 'We currently operate on BlockDAG network with plans to expand to Ethereum, Polygon, and other major blockchain networks.',
+    },
+  ]);
+
+  const breadcrumbData = structuredDataGenerator.generateBreadcrumbData([
+    { name: 'Home', url: '/' },
+  ]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-[#070E1B]">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
-        <h1 className="text-2xl font-bold text-white mb-8">
-          BlockDAG Starter Kit
-        </h1>
-        <div className="bg-gray-800 rounded-lg p-6">
-          {isConnected ? (
-            <>
-              <p className="text-white">Connected to {address}</p>
-              <button
-                onClick={() => disconnect()}
-                className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-              >
-                Disconnect
-              </button>
-            </>
-          ) : (
-            <ConnectButton />
-          )}
-        </div>
-      </div>
-    </main>
+    <>
+      <StructuredData data={[faqData, breadcrumbData]} id="homepage-structured-data" />
+      <Box as="main" minH="100vh">
+        <Navbar />
+        <HeroSection />
+        <FeaturesSection />
+        <AISection />
+        <ChatbotSection />
+        <TrustSecuritySection />
+        <CTASection />
+      </Box>
+    </>
   );
 }

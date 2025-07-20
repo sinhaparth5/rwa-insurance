@@ -1,0 +1,77 @@
+{
+  "name": "2006 Porsche Cayenne #2",
+  "description": "Tokenized 2006 Porsche Cayenne - Sports vehicle on BlockDAG",
+  "image": "ipfs://QmGiS6M9yNSnNAGVrTmyKQG4KYMCVuWVXMahivXhj5Lh3t/image.jpg",
+  "external_url": "https://your-dapp.com/vehicle/2",
+  "attributes": [
+    {
+      "trait_type": "Make",
+      "value": "Porsche"
+    },
+    {
+      "trait_type": "Model",
+      "value": "Cayenne"
+    },
+    {
+      "trait_type": "Year",
+      "value": 2006
+    },
+    {
+      "trait_type": "Category",
+      "value": "Sports"
+    },
+    {
+      "trait_type": "VIN",
+      "value": "WP0067135172129"
+    },
+    {
+      "trait_type": "Registration",
+      "value": "BC06 BWF"
+    },
+    {
+      "trait_type": "Current Value",
+      "value": "\u00a311,280"
+    },
+    {
+      "trait_type": "Location",
+      "value": "Tower Hamlets"
+    },
+    {
+      "trait_type": "Postcode",
+      "value": "E1 6WL"
+    },
+    {
+      "trait_type": "Risk Level",
+      "value": "High"
+    },
+    {
+      "trait_type": "Mileage",
+      "value": "97,564 miles"
+    },
+    {
+      "trait_type": "Fuel Type",
+      "value": "Hybrid"
+    },
+    {
+      "trait_type": "Transmission",
+      "value": "Manual"
+    },
+    {
+      "trait_type": "Color",
+      "value": "White"
+    },
+    {
+      "trait_type": "Verification Status",
+      "value": "Verified"
+    }
+  ],
+  "vehicle_data": {
+    "vin": "WP0067135172129",
+    "registration": "BC06 BWF",
+    "postcode": "E1 6WL",
+    "owner_wallet": "0x219fb2bd78f1d844bf971a91a00843f964d2db01",
+    "mint_date": "2020-05-02",
+    "last_valuation": 11280,
+    "insurance_eligible": true
+  }
+}
