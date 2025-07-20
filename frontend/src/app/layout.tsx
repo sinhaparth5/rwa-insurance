@@ -104,7 +104,7 @@ export const metadata: Metadata = {
     }, {} as Record<string, string>),
   },
   other: {
-    'apple-mobile-web-app-capable': 'yes',
+    'mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'default',
     'apple-mobile-web-app-title': RWA_INSURANCE_SEO_CONFIG.app.name,
     'application-name': RWA_INSURANCE_SEO_CONFIG.app.name,
