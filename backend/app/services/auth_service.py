@@ -18,6 +18,10 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         expire = datetime.utcnow() + timedelta(minutes=settings.access_token_expire_minutes)
     
     to_encode.update({"exp": expire})
+    # Do NOT convert sub to integer; keep it as a string
+    if "sub" in to_encode:
+        to_encode["sub"] = str(to_encode["sub"])  # Ensure sub is a string
+    
     encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
     return encoded_jwt
 
