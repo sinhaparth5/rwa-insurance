@@ -40,6 +40,9 @@ import { Claims } from './Claims'
 import { useWallet } from '@/hooks/useWallet'
 import ConnectButton from '../ConnectButton'
 import { Logo } from '@/components/ui/Logo'
+import { LiaRobotSolid } from 'react-icons/lia'
+import { ChatbotInterface } from '../ChatbotInterface'
+import { DashboardOverview } from './DashboardOverview'
 
 interface LinkItemProps {
   name: string
@@ -70,6 +73,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'My Assets', icon: FiList, id: 'assets' },
   { name: 'Register Asset', icon: FiPlus, id: 'register' },
   { name: 'My Policies', icon: FiShield, id: 'policies' },
+  { name: 'AI Assitant', icon: LiaRobotSolid, id: 'chat' },
   { name: 'Claims', icon: FiFileText, id: 'claims' },
   { name: 'Settings', icon: FiSettings, id: 'settings' },
 ]
@@ -257,6 +261,8 @@ const DashboardContent = ({ activeTab }: { activeTab: string }) => {
       return <RegisterAsset />;
     case 'policies':
       return <MyPolicies />;
+    case 'chat':
+      return <ChatbotInterface />;
     case 'claims':
       return <Claims />;
     case 'settings':
@@ -265,13 +271,6 @@ const DashboardContent = ({ activeTab }: { activeTab: string }) => {
       return <DashboardOverview />;
   }
 };
-
-const DashboardOverview = () => (
-  <Box>
-    <Text fontSize="2xl" fontWeight="bold" mb={6}>Dashboard Overview</Text>
-    <Text>Welcome to your insurance dashboard. Select an option from the sidebar to get started.</Text>
-  </Box>
-);
 
 const Settings = () => (
   <Box>
