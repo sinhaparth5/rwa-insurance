@@ -2,80 +2,124 @@ import { MetadataRoute } from 'next';
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dag.astrareconslab.com';
 
-async function fetchBlogPosts() {
-  try {
-    // Only fetch if we have a valid base URL and we're not in build time
-    if (typeof window !== 'undefined' || !baseUrl.includes('undefined')) {
-      const response = await fetch(`${baseUrl}/api/blog/posts`, {
-        next: { revalidate: 3600 } // Cache for 1 hour
-      });
-      
-      if (!response.ok) {
-        console.warn('Failed to fetch blog posts for sitemap');
-        return [];
-      }
-      
-      return await response.json();
-    }
-    return [];
-  } catch (error) {
-    console.warn('Error fetching blog posts for sitemap:', error);
-    return [];
+// Safe fetch function that handles build-time errors
+async function safeFetch(url: string, fallback: any[] = []) {
+  // Skip API calls during build if no server is running
+  if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV !== 'production') {
+    return fallback;
   }
+
+  try {
+    const response = await fetch(url, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(5000), // 5 second timeout
+    });
+    
+    if (!response.ok) {
+      console.warn(`Failed to fetch ${url}: ${response.status}`);
+      return fallback;
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.warn(`Error fetching ${url}:`, error);
+    return fallback;
+  }
+}
+
+async function fetchBlogPosts() {
+  // Return static blog examples if API isn't available
+  const fallbackPosts = [
+    {
+      slug: 'introducing-rwa-insurance',
+      publishedAt: '2025-01-01',
+      updatedAt: '2025-01-01'
+    },
+    {
+      slug: 'how-blockchain-transforms-insurance', 
+      publishedAt: '2025-01-10',
+      updatedAt: '2025-01-10'
+    },
+    {
+      slug: 'nft-vehicle-insurance-guide',
+      publishedAt: '2025-01-15',
+      updatedAt: '2025-01-15'
+    }
+  ];
+
+  return await safeFetch(`${baseUrl}/api/blog/posts`, fallbackPosts);
 }
 
 async function fetchDocs() {
-  try {
-    if (typeof window !== 'undefined' || !baseUrl.includes('undefined')) {
-      const response = await fetch(`${baseUrl}/api/docs/pages`, {
-        next: { revalidate: 3600 }
-      });
-      
-      if (!response.ok) {
-        console.warn('Failed to fetch docs for sitemap');
-        return [];
-      }
-      
-      return await response.json();
+  // Return static doc examples if API isn't available
+  const fallbackDocs = [
+    {
+      slug: 'getting-started',
+      updatedAt: '2025-01-01'
+    },
+    {
+      slug: 'api-reference',
+      updatedAt: '2025-01-01'
+    },
+    {
+      slug: 'smart-contracts',
+      updatedAt: '2025-01-01'
+    },
+    {
+      slug: 'integration-guide',
+      updatedAt: '2025-01-01'
     }
-    return [];
-  } catch (error) {
-    console.warn('Error fetching docs for sitemap:', error);
-    return [];
-  }
+  ];
+
+  return await safeFetch(`${baseUrl}/api/docs/pages`, fallbackDocs);
 }
 
 async function fetchPublicAssets() {
-  try {
-    if (typeof window !== 'undefined' || !baseUrl.includes('undefined')) {
-      const response = await fetch(`${baseUrl}/api/assets/public`, {
-        next: { revalidate: 3600 }
-      });
-      
-      if (!response.ok) {
-        console.warn('Failed to fetch public assets for sitemap');
-        return [];
-      }
-      
-      return await response.json();
+  // Return static asset examples if API isn't available
+  const fallbackAssets = [
+    {
+      type: 'vehicle',
+      tokenId: '456',
+      updatedAt: '2025-01-01'
+    },
+    {
+      type: 'property',
+      tokenId: '789', 
+      updatedAt: '2025-01-01'
     }
-    return [];
-  } catch (error) {
-    console.warn('Error fetching public assets for sitemap:', error);
-    return [];
-  }
+  ];
+
+  return await safeFetch(`${baseUrl}/api/assets/public`, fallbackAssets);
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const currentDate = new Date().toISOString();
 
-  // Static pages
+  // Static pages for RWA Insurance Platform
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 1,
+    },
+    {
+      url: `${baseUrl}/dashboard`,
+      lastModified: currentDate,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/chat`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/create-policy`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/about`,
@@ -134,10 +178,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    // Fetch dynamic content with error handling
+    // Fetch dynamic content with graceful fallbacks
     const [blogPosts, docs, publicAssets] = await Promise.allSettled([
       fetchBlogPosts(),
-      fetchDocs(),
+      fetchDocs(), 
       fetchPublicAssets(),
     ]);
 
@@ -183,7 +227,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [...staticPages, ...blogPages, ...docPages, ...assetPages];
   } catch (error) {
     console.warn('Error generating sitemap:', error);
-    // Return static pages only if dynamic content fails
+    // Always return static pages if everything fails
     return staticPages;
   }
 }
