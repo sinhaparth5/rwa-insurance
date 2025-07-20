@@ -1,7 +1,7 @@
 # AI-Powered RWA Insurance Protocol
 ## Decentralized Insurance for Tokenized Real-World Assets on BlockDAG
 
-**Version 1.0**  
+**Version 1.1**  
 **Date: July 2025**
 
 ---
