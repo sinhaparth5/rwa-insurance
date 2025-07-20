@@ -1,226 +1,434 @@
 "use client";
 
-import { useState } from 'react';
-import { useWalletAuth } from '@/hooks/useWalletAuth';
+import {
+  Box,
+  Card,
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  Button,
+  Input,
+  Badge,
+  SimpleGrid,
+  Flex,
+  Spinner
+} from "@chakra-ui/react";
+import { Field } from "@/components/ui/field";
+import { Alert } from "@/components/ui/alert";
+import { toaster } from "@/components/ui/toaster";
+import { useState, useEffect } from "react";
+import { useWallet } from "@/hooks/useWallet";
+import { useAssetRegistry, useInsuranceManager } from "@/hooks/useContracts";
+import { formatEther, parseEther } from "viem";
+import { LineChart, BarChart, DonutChart } from "@tremor/react";
 
-interface PolicyFormData {
-  assetTokenId: string;
-  assetType: 'vehicle' | 'property' | 'art';
-  coverageAmount: string;
-  duration: number;
-  assetDetails: {
-    name: string;
-    estimatedValue: string;
-    location: string;
+// Fake API service (replace with real API calls later)
+const fakeAPIService = {
+  async getRiskAssessment(nftContract: string, tokenId: number, walletAddress: string) {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    return {
+      vehicle_info: {
+        make: "Aston Martin",
+        model: "DB5", 
+        year: 1965,
+        value: 50000
+      },
+      risk_score: 78.5,
+      monthly_premium: 156,
+      risk_factors: ["High value classic vehicle", "London location", "Limited security"],
+      coverage_recommendation: "comprehensive",
+      confidence: 0.92
+    };
+  },
+
+  async createPolicy(policyData: any) {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    return {
+      policy_id: `POL-${Date.now()}`,
+      metadata_uri: "ipfs://QmPolicyHash123...",
+      contract_params: {
+        assetId: policyData.asset_id,
+        coverageAmount: parseEther(policyData.coverage_amount.toString()),
+        duration: policyData.duration_months * 30 * 24 * 3600,
+        riskLevel: 2
+      },
+      premium_amount: 156,
+      success: true
+    };
+  }
+};
+
+interface RiskAssessment {
+  vehicle_info: {
+    make: string;
+    model: string;
+    year: number;
+    value: number;
   };
+  risk_score: number;
+  monthly_premium: number;
+  risk_factors: string[];
+  coverage_recommendation: string;
+  confidence: number;
 }
 
-export function PolicyCreationForm() {
-  const { userSession } = useWalletAuth();
-  const [formData, setFormData] = useState<PolicyFormData>({
-    assetTokenId: '',
-    assetType: 'vehicle',
-    coverageAmount: '',
-    duration: 12,
-    assetDetails: {
-      name: '',
-      estimatedValue: '',
-      location: ''
-    }
-  });
+export const PolicyCreationForm = () => {
+  const { address, isConnected } = useWallet();
+  const { useUserAssets } = useAssetRegistry();
+  const { purchasePolicy } = useInsuranceManager();
+  
+  const { data: userAssets, isLoading: assetsLoading } = useUserAssets(address);
+  
+  const [selectedAsset, setSelectedAsset] = useState<bigint | null>(null);
+  const [coverageAmount, setCoverageAmount] = useState("");
+  const [duration, setDuration] = useState(12);
+  const [riskAssessment, setRiskAssessment] = useState<RiskAssessment | null>(null);
   const [loading, setLoading] = useState(false);
-  const [quote, setQuote] = useState<any>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const getQuote = async () => {
-    setLoading(true);
+  // Fake chart data for risk visualization
+  const riskTrendData = [
+    { month: "Jan", risk: 65 },
+    { month: "Feb", risk: 70 },
+    { month: "Mar", risk: 68 },
+    { month: "Apr", risk: 72 },
+    { month: "May", risk: 75 },
+    { month: "Jun", risk: 78 }
+  ];
+
+  const premiumBreakdown = [
+    { category: "Base Premium", amount: 85 },
+    { category: "Location Risk", amount: 35 },
+    { category: "Vehicle Age", amount: 20 },
+    { category: "Value Premium", amount: 16 }
+  ];
+
+  const riskDistribution = [
+    { name: "Low Risk", value: 25, color: "#10b981" },
+    { name: "Medium Risk", value: 45, color: "#f59e0b" }, 
+    { name: "High Risk", value: 30, color: "#ef4444" }
+  ];
+
+  const analyzeAsset = async () => {
+    if (!selectedAsset || !address) return;
+    
+    setIsAnalyzing(true);
     try {
-      // Simulate AI risk assessment
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const riskScore = Math.floor(Math.random() * 40) + 60;
-      const monthlyPremium = Math.floor(parseInt(formData.coverageAmount) * 0.003);
-      
-      setQuote({
-        riskScore,
-        monthlyPremium,
-        annualPremium: monthlyPremium * 12,
-        factors: [
-          'Asset location: Low crime area (+10 points)',
-          'Asset type: Classic vehicle (-5 points)',
-          'Owner history: No previous claims (+15 points)'
-        ]
-      });
+      // Replace with real API call: await api.getRiskAssessment(contractAddress, selectedAsset, address)
+      const assessment = await fakeAPIService.getRiskAssessment("0x123...", Number(selectedAsset), address);
+      setRiskAssessment(assessment);
     } catch (error) {
-      console.error('Failed to get quote:', error);
+      toaster.create({
+        title: "Analysis Failed",
+        description: "Could not analyze asset risk",
+        type: "error"
+      });
     } finally {
-      setLoading(false);
+      setIsAnalyzing(false);
     }
   };
 
   const createPolicy = async () => {
+    if (!selectedAsset || !coverageAmount || !riskAssessment) return;
+    
     setLoading(true);
     try {
-      const response = await fetch('/api/policies', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          owner: userSession?.address,
-          premium: quote.monthlyPremium.toString()
-        }),
+      // Step 1: Create policy metadata via API
+      const policyData = await fakeAPIService.createPolicy({
+        asset_id: Number(selectedAsset),
+        coverage_amount: parseInt(coverageAmount),
+        duration_months: duration,
+        wallet_address: address
       });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        alert('Policy created successfully!');
-        // Redirect to dashboard
-        window.location.href = '/dashboard';
-      }
-    } catch (error) {
-      console.error('Failed to create policy:', error);
-      alert('Failed to create policy. Please try again.');
+
+      // Step 2: Call smart contract
+      await purchasePolicy(
+        selectedAsset,
+        coverageAmount,
+        duration * 30 * 24 * 3600, // Convert months to seconds
+        2 // Risk level
+      );
+
+      toaster.create({
+        title: "Policy Created Successfully!",
+        description: `Policy ID: ${policyData.policy_id}`,
+        type: "success"
+      });
+
+      // Reset form
+      setSelectedAsset(null);
+      setCoverageAmount("");
+      setRiskAssessment(null);
+
+    } catch (error: any) {
+      toaster.create({
+        title: "Policy Creation Failed",
+        description: error?.message || "Transaction failed",
+        type: "error"
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  if (!isConnected) {
+    return (
+      <Box maxW="4xl" mx="auto">
+        <Card.Root>
+          <Card.Body>
+            <Alert.Root status="info">
+              <Alert.Indicator />
+              <Alert.Title>Connect your wallet to create insurance policies</Alert.Title>
+            </Alert.Root>
+          </Card.Body>
+        </Card.Root>
+      </Box>
+    );
+  }
+
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold mb-6">Create Insurance Policy</h2>
-      
-      <form className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Asset Type
-          </label>
-          <select
-            value={formData.assetType}
-            onChange={(e) => setFormData({...formData, assetType: e.target.value as any})}
-            className="w-full p-3 border border-gray-300 rounded-lg"
-          >
-            <option value="vehicle">Vehicle</option>
-            <option value="property">Property</option>
-            <option value="art">Art & Collectibles</option>
-          </select>
-        </div>
+    <Box maxW="6xl" mx="auto" p={6}>
+      <VStack gap={8} align="stretch">
+        
+        {/* Header */}
+        <Box>
+          <Heading size="xl" mb={2}>Create Insurance Policy</Heading>
+          <Text color="gray.600">Protect your tokenized assets with AI-powered risk assessment</Text>
+        </Box>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Asset Token ID
-          </label>
-          <input
-            type="text"
-            value={formData.assetTokenId}
-            onChange={(e) => setFormData({...formData, assetTokenId: e.target.value})}
-            placeholder="e.g., 456 for CarNFT-AstonDB5-456"
-            className="w-full p-3 border border-gray-300 rounded-lg"
-          />
-        </div>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} gap={8}>
+          
+          {/* Left Column - Form */}
+          <VStack gap={6} align="stretch">
+            
+            {/* Asset Selection */}
+            <Card.Root>
+              <Card.Header>
+                <Heading size="md">Select Asset</Heading>
+              </Card.Header>
+              <Card.Body>
+                {assetsLoading ? (
+                  <Flex justify="center" py={4}>
+                    <Spinner />
+                  </Flex>
+                ) : Array.isArray(userAssets) && userAssets.length > 0 ? (
+                  <VStack gap={3} align="stretch">
+                    {userAssets.map((assetId: bigint) => (
+                      <Card.Root
+                        key={assetId.toString()}
+                        cursor="pointer"
+                        onClick={() => setSelectedAsset(assetId)}
+                        bg={selectedAsset === assetId ? "cyan.50" : "white"}
+                        borderColor={selectedAsset === assetId ? "cyan.500" : "gray.200"}
+                        borderWidth="2px"
+                      >
+                        <Card.Body py={3}>
+                          <HStack justify="space-between">
+                            <VStack align="start" gap={1}>
+                              <Text fontWeight="semibold">Asset #{assetId.toString()}</Text>
+                              <Text fontSize="sm" color="gray.600">1965 Aston Martin DB5</Text>
+                            </VStack>
+                            <Badge colorScheme="green">Verified</Badge>
+                          </HStack>
+                        </Card.Body>
+                      </Card.Root>
+                    ))}
+                  </VStack>
+                ) : (
+                  <Text>No assets found. Register an asset first.</Text>
+                )}
+              </Card.Body>
+            </Card.Root>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Asset Name
-          </label>
-          <input
-            type="text"
-            value={formData.assetDetails.name}
-            onChange={(e) => setFormData({
-              ...formData, 
-              assetDetails: {...formData.assetDetails, name: e.target.value}
-            })}
-            placeholder="e.g., 1965 Aston Martin DB5"
-            className="w-full p-3 border border-gray-300 rounded-lg"
-          />
-        </div>
+            {/* Risk Analysis */}
+            {selectedAsset && (
+              <Card.Root>
+                <Card.Header>
+                  <HStack justify="space-between">
+                    <Heading size="md">Risk Analysis</Heading>
+                    <Button 
+                      size="sm" 
+                      colorScheme="cyan"
+                      onClick={analyzeAsset}
+                      loading={isAnalyzing}
+                      loadingText="Analyzing..."
+                    >
+                      Analyze Risk
+                    </Button>
+                  </HStack>
+                </Card.Header>
+                <Card.Body>
+                  {isAnalyzing ? (
+                    <VStack gap={4} py={6}>
+                      <Spinner size="lg" />
+                      <Text>AI analyzing asset risk factors...</Text>
+                    </VStack>
+                  ) : riskAssessment ? (
+                    <VStack gap={4} align="stretch">
+                      <SimpleGrid columns={2} gap={4}>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600">Risk Score</Text>
+                          <Text fontSize="2xl" fontWeight="bold" color="orange.500">
+                            {riskAssessment.risk_score}/100
+                          </Text>
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600">Monthly Premium</Text>
+                          <Text fontSize="2xl" fontWeight="bold" color="cyan.600">
+                            £{riskAssessment.monthly_premium}
+                          </Text>
+                        </Box>
+                      </SimpleGrid>
+                      
+                      <Box>
+                        <Text fontSize="sm" fontWeight="semibold" mb={2}>Risk Factors:</Text>
+                        <VStack gap={1} align="stretch">
+                          {riskAssessment.risk_factors.map((factor, idx) => (
+                            <Text key={idx} fontSize="sm" color="gray.600">• {factor}</Text>
+                          ))}
+                        </VStack>
+                      </Box>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Coverage Amount (£)
-            </label>
-            <input
-              type="number"
-              value={formData.coverageAmount}
-              onChange={(e) => setFormData({...formData, coverageAmount: e.target.value})}
-              placeholder="50000"
-              className="w-full p-3 border border-gray-300 rounded-lg"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Duration (months)
-            </label>
-            <select
-              value={formData.duration}
-              onChange={(e) => setFormData({...formData, duration: parseInt(e.target.value)})}
-              className="w-full p-3 border border-gray-300 rounded-lg"
-            >
-              <option value={6}>6 months</option>
-              <option value={12}>12 months</option>
-              <option value={24}>24 months</option>
-            </select>
-          </div>
-        </div>
+                      <Badge alignSelf="start" colorScheme="green">
+                        {Math.round(riskAssessment.confidence * 100)}% Confidence
+                      </Badge>
+                    </VStack>
+                  ) : (
+                    <Text color="gray.500">Click "Analyze Risk" to get AI assessment</Text>
+                  )}
+                </Card.Body>
+              </Card.Root>
+            )}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Location
-          </label>
-          <input
-            type="text"
-            value={formData.assetDetails.location}
-            onChange={(e) => setFormData({
-              ...formData, 
-              assetDetails: {...formData.assetDetails, location: e.target.value}
-            })}
-            placeholder="London, UK"
-            className="w-full p-3 border border-gray-300 rounded-lg"
-          />
-        </div>
+            {/* Policy Details */}
+            {riskAssessment && (
+              <Card.Root>
+                <Card.Header>
+                  <Heading size="md">Policy Details</Heading>
+                </Card.Header>
+                <Card.Body>
+                  <VStack gap={4} align="stretch">
+                    <Field label="Coverage Amount (£)">
+                      <Input
+                        type="number"
+                        value={coverageAmount}
+                        onChange={(e) => setCoverageAmount(e.target.value)}
+                        placeholder="50000"
+                      />
+                      <Text fontSize="sm" color="gray.600">
+                        Maximum: £{riskAssessment.vehicle_info.value.toLocaleString()}
+                      </Text>
+                    </Field>
 
-        <div className="flex gap-4">
-          <button
-            type="button"
-            onClick={getQuote}
-            disabled={loading || !formData.coverageAmount}
-            className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
-          >
-            {loading ? 'Calculating...' : 'Get AI Quote'}
-          </button>
-        </div>
-      </form>
+                    <Field label="Duration (months)">
+                      <HStack>
+                        {[6, 12, 24].map((months) => (
+                          <Button
+                            key={months}
+                            size="sm"
+                            variant={duration === months ? "solid" : "outline"}
+                            colorScheme="cyan"
+                            onClick={() => setDuration(months)}
+                          >
+                            {months}m
+                          </Button>
+                        ))}
+                      </HStack>
+                    </Field>
 
-      {quote && (
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-lg font-semibold mb-4">AI Risk Assessment</h3>
-          <div className="grid md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <span className="text-gray-600">Risk Score:</span>
-              <span className="ml-2 font-bold text-lg">{quote.riskScore}/100</span>
-            </div>
-            <div>
-              <span className="text-gray-600">Monthly Premium:</span>
-              <span className="ml-2 font-bold text-lg text-green-600">£{quote.monthlyPremium}</span>
-            </div>
-          </div>
-          <div className="mb-4">
-            <h4 className="font-medium mb-2">Risk Factors:</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              {quote.factors.map((factor: string, index: number) => (
-                <li key={index}>• {factor}</li>
-              ))}
-            </ul>
-          </div>
-          <button
-            onClick={createPolicy}
-            disabled={loading}
-            className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 disabled:bg-gray-400"
-          >
-            {loading ? 'Creating Policy...' : 'Create Policy'}
-          </button>
-        </div>
-      )}
-    </div>
+                    <Button
+                      colorScheme="cyan"
+                      size="lg"
+                      onClick={createPolicy}
+                      loading={loading}
+                      loadingText="Creating Policy..."
+                      disabled={!coverageAmount}
+                    >
+                      Create Policy - £{riskAssessment.monthly_premium}/month
+                    </Button>
+                  </VStack>
+                </Card.Body>
+              </Card.Root>
+            )}
+          </VStack>
+
+          {/* Right Column - Charts & Analytics */}
+          <VStack gap={6} align="stretch">
+            
+            {/* Risk Trend Chart */}
+            <Card.Root>
+              <Card.Header>
+                <Heading size="md">Risk Trend Analysis</Heading>
+              </Card.Header>
+              <Card.Body>
+                <LineChart
+                  data={riskTrendData}
+                  index="month"
+                  categories={["risk"]}
+                  colors={["cyan"]}
+                  yAxisWidth={48}
+                  showLegend={false}
+                />
+              </Card.Body>
+            </Card.Root>
+
+            {/* Premium Breakdown */}
+            {riskAssessment && (
+              <Card.Root>
+                <Card.Header>
+                  <Heading size="md">Premium Breakdown</Heading>
+                </Card.Header>
+                <Card.Body>
+                  <BarChart
+                    data={premiumBreakdown}
+                    index="category"
+                    categories={["amount"]}
+                    colors={["cyan"]}
+                    yAxisWidth={48}
+                    showLegend={false}
+                  />
+                </Card.Body>
+              </Card.Root>
+            )}
+
+            {/* Risk Distribution */}
+            <Card.Root>
+              <Card.Header>
+                <Heading size="md">Portfolio Risk Distribution</Heading>
+              </Card.Header>
+              <Card.Body>
+                <DonutChart
+                  data={riskDistribution}
+                  category="value"
+                  index="name"
+                  colors={["emerald", "yellow", "red"]}
+                  showLabel={true}
+                />
+              </Card.Body>
+            </Card.Root>
+
+            {/* Quick Stats */}
+            <SimpleGrid columns={2} gap={4}>
+              <Card.Root>
+                <Card.Body textAlign="center">
+                  <Text fontSize="2xl" fontWeight="bold" color="cyan.600">2.3%</Text>
+                  <Text fontSize="sm" color="gray.600">Average Premium Rate</Text>
+                </Card.Body>
+              </Card.Root>
+              <Card.Root>
+                <Card.Body textAlign="center">
+                  <Text fontSize="2xl" fontWeight="bold" color="green.600">94%</Text>
+                  <Text fontSize="sm" color="gray.600">Claims Approved</Text>
+                </Card.Body>
+              </Card.Root>
+            </SimpleGrid>
+          </VStack>
+        </SimpleGrid>
+      </VStack>
+    </Box>
   );
-}
+};
