@@ -10,7 +10,7 @@ export const Alert = {
     return <ChakraAlert.Root ref={ref} {...props} />
   }),
   
-  Indicator: forwardRef<HTMLDivElement, ChakraAlert.IndicatorProps>(function AlertIndicator(props, ref) {
+  Indicator: forwardRef<SVGSVGElement, ChakraAlert.IndicatorProps>(function AlertIndicator(props, ref) {
     return <ChakraAlert.Indicator ref={ref} {...props} />
   }),
   
