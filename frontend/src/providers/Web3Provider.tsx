@@ -5,6 +5,7 @@ import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { State, WagmiProvider } from "wagmi";
 import { wagmiConfig, projectId } from "@/configs/wagmi";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 // Create QueryClient instance outside component to prevent recreation
 const queryClient = new QueryClient({
@@ -133,7 +134,9 @@ export default function Web3Provider({
   return (
     <WagmiProvider config={wagmiConfig} initialState={initialState}>
       <QueryClientProvider client={queryClient}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
