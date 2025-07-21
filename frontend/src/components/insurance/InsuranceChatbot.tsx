@@ -1,16 +1,26 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useWalletAuth } from '@/hooks/useWalletAuth';
-import type { ChatMessage } from '@/types/chatbot';
+import { useWallet } from '@/hooks/useWallet';
+import { useAuth } from '@/contexts/AuthContext';
+import { chatAPI } from '@/lib/api/services';
+
+interface ChatMessage {
+  id: string;
+  type: 'user' | 'ai';
+  content: string;
+  timestamp: Date;
+}
 
 export function InsuranceChatbot() {
-  const { userSession } = useWalletAuth();
+  const { address, isConnected } = useWallet();
+  const { isAuthenticated, token } = useAuth();
+  const [sessionId] = useState(() => `session_${Date.now()}`);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
       type: 'ai',
-      content: "Hello! I'm your AI insurance assistance. I can help you insure your tokenized assets like vehicle, properties, or art. What would you like to insure today?",
+      content: "Hello! I'm your AI insurance assistant. I can help you with questions about tokenized asset insurance. What would you like to know?",
       timestamp: new Date(),
     }
   ]);
@@ -18,18 +28,18 @@ export function InsuranceChatbot() {
   const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
-  // Fix hydration error by ensuring timestamps only render on client
+  // Fix hydration error
   useEffect(() => {
     setIsClient(true);
   }, []);
 
   const formatTime = (date: Date) => {
-    if (!isClient) return ''; // Return empty string during SSR
+    if (!isClient) return '';
     return date.toLocaleTimeString();
   };
 
   const sendMessage = async () => {
-    if (!inputValue.trim() || !userSession?.address) return;
+    if (!inputValue.trim() || !isAuthenticated || !token) return;
     
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -39,114 +49,135 @@ export function InsuranceChatbot() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputValue;
     setInputValue('');
     setLoading(true);
-    // @TODO this is just wireframes need to add original apis 
-    try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: inputValue,
-          walletAddress: userSession.address,
-          context: messages.slice(-5), // Last 5 messages for context 
-        }),
-      });
 
-      const aiResponse = await response.json();
+    try {
+      console.log('💬 Sending message to chatbot:', currentInput);
+
+      // Only call chat API - no other endpoints
+      const aiResponse = await chatAPI.sendMessage(currentInput, sessionId, token);
       
-      const aiMessages: ChatMessage = {
+      console.log('🤖 AI Response:', aiResponse);
+      
+      const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: aiResponse.message,
+        content: aiResponse.response || aiResponse.message || "I understand your question about insurance. For full functionality like creating policies or managing assets, please use the full ChatbotInterface.",
         timestamp: new Date(),
-        metadata: aiResponse.metadata,
       };
 
-      setMessages(prev => [...prev, aiMessages]);
+      setMessages(prev => [...prev, aiMessage]);
 
-      // Handle AI actions (create policy, submit claim, etc)
-      if (aiResponse.metadata?.action) {
-        await handleAIAction(aiResponse.metadata);
-      }
     } catch (error) {
-      console.error('Failed to send messages:', error);
+      console.error('❌ Failed to send message:', error);
+      
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'ai',
+        content: "Sorry, I'm having trouble connecting to the chat service. Please try again.",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setLoading(false);
     }
-  }
-
-  const handleAIAction = async (metadata: any) => {
-    switch (metadata.action) {
-      case 'create_policy':
-        // Redirect to policy creation with pre-filled data
-        window.location.href = `/create-policy?data=${encodeURIComponent(JSON.stringify(metadata.data))}`;
-        break;
-      case 'submit_claim':
-        // Open claim submission modal
-        // setShowClaimModal(true);
-        break;
-      case 'check_quote':
-        // Display quote in chat
-        break;
-    }
   };
 
-  return (
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">AI Insurance Assistant</h2>
-      
-      {!userSession?.isConnected && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded p-4 mb-4">
-          <p className="text-yellow-800">Please connect your wallet to start chatting with the AI assistant.</p>
+  if (!isConnected) {
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-6 max-w-xl mx-auto">
+        <h2 className="text-xl font-bold mb-4">Simple Chat Assistant</h2>
+        <div className="bg-yellow-50 border border-yellow-200 rounded p-4">
+          <p className="text-yellow-800">Please connect your wallet to start chatting.</p>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      <div className="h-96 overflow-y-auto mb-4 p-4 border rounded">
+  if (!isAuthenticated) {
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-6 max-w-xl mx-auto">
+        <h2 className="text-xl font-bold mb-4">Simple Chat Assistant</h2>
+        <div className="bg-blue-50 border border-blue-200 rounded p-4">
+          <p className="text-blue-800">Please authenticate your wallet to start chatting.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6 max-w-xl mx-auto">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold">Simple Chat Assistant</h2>
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+          <span className="text-xs text-gray-600">Chat Only</span>
+        </div>
+      </div>
+      
+      {/* Connection Status */}
+      <div className="bg-green-50 border border-green-200 rounded p-2 mb-4">
+        <div className="text-xs text-green-800">
+          ✅ Connected as {address?.slice(0, 6)}...{address?.slice(-4)}
+        </div>
+      </div>
+
+      {/* Chat Messages */}
+      <div className="h-80 overflow-y-auto mb-4 p-3 border rounded bg-gray-50">
         {messages.map((message) => (
-          <div key={message.id} className={`mb-4 ${message.type === 'user' ? 'text-right' : 'text-left'}`}>
-            <div className={`inline-block p-3 rounded-lg max-w-xs ${
+          <div key={message.id} className={`mb-3 ${message.type === 'user' ? 'text-right' : 'text-left'}`}>
+            <div className={`inline-block p-2 rounded-lg max-w-xs text-sm ${
               message.type === 'user' 
                 ? 'bg-blue-600 text-white' 
-                : 'bg-gray-100 text-gray-800'
+                : 'bg-white text-gray-800 border'
             }`}>
-              <p>{message.content}</p>
+              <p className="whitespace-pre-wrap">{message.content}</p>
               <small className="text-xs opacity-75" suppressHydrationWarning>
                 {formatTime(message.timestamp)}
               </small>
             </div>
           </div>
         ))}
+        
         {loading && (
           <div className="text-left">
-            <div className="inline-block p-3 rounded-lg bg-gray-100">
+            <div className="inline-block p-2 rounded-lg bg-white border">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce"></div>
+                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                <span className="text-xs text-gray-600 ml-1">AI is thinking...</span>
               </div>
             </div>
           </div>
         )}
       </div>
 
+      {/* Message Input */}
       <div className="flex gap-2">
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          placeholder="Ask about insurance for your assets..."
-          className="flex-1 p-3 border rounded-lg"
-          disabled={!userSession?.isConnected || loading}
+          placeholder="Ask me about insurance..."
+          className="flex-1 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          disabled={loading}
         />
         <button
           onClick={sendMessage}
-          disabled={!userSession?.isConnected || loading || !inputValue.trim()}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+          disabled={loading || !inputValue.trim()}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 transition-colors text-sm"
         >
-          Send
+          {loading ? '...' : 'Send'}
         </button>
+      </div>
+
+      {/* Help Text */}
+      <div className="mt-3 text-xs text-gray-500 text-center">
+        <p>💡 For full functionality (create policies, manage assets), use the full ChatbotInterface</p>
       </div>
     </div>
   );
