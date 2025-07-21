@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { headers } from "next/headers";
-import ContextProvider from '@/context'
+import ContextProvider from '@/contexts'
 import { RWA_INSURANCE_SEO_CONFIG } from "@/lib/seo/config";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { StructuredDataGenerator } from "@/lib/seo/structured-data";
