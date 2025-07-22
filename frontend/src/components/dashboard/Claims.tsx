@@ -17,7 +17,7 @@ import {
   Spinner,
   IconButton,
 } from "@chakra-ui/react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { 
   FiFileText, 
   FiClock, 
@@ -37,8 +37,8 @@ export const Claims = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadClaims = useCallback(async () => {
-    if (!insuranceAPI) return;
+  const loadClaims = async () => {
+    if (!insuranceAPI || !token) return;
     
     setLoading(true);
     setError(null);
@@ -55,13 +55,14 @@ export const Claims = () => {
     } finally {
       setLoading(false);
     }
-  }, [insuranceAPI]);
+  };
 
+  // Fixed useEffect - only depend on stable values
   useEffect(() => {
     if (isAuthenticated && token && insuranceAPI) {
       loadClaims();
     }
-  }, [isAuthenticated, token, loadClaims]);
+  }, [isAuthenticated, token]); // Remove insuranceAPI from dependencies
 
   const refreshData = async () => {
     setRefreshing(true);

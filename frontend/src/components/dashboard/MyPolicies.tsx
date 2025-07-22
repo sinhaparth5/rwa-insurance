@@ -29,14 +29,8 @@ export const MyPolicies = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (isAuthenticated && insuranceAPI) {
-      loadPolicies();
-    }
-  }, [isAuthenticated, insuranceAPI]);
-
   const loadPolicies = async () => {
-    if (!insuranceAPI) return;
+    if (!insuranceAPI || !token) return;
     
     setLoading(true);
     setError(null);
@@ -54,6 +48,13 @@ export const MyPolicies = () => {
       setLoading(false);
     }
   };
+
+  // Fixed useEffect - only depend on stable values
+  useEffect(() => {
+    if (isAuthenticated && token && insuranceAPI) {
+      loadPolicies();
+    }
+  }, [isAuthenticated, token]); // Remove insuranceAPI from dependencies
 
   const refreshData = async () => {
     setRefreshing(true);

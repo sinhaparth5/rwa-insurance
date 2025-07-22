@@ -14,7 +14,7 @@ import {
   Spinner,
   IconButton,
 } from "@chakra-ui/react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useWallet } from "@/hooks/useWallet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useInsuranceAPI } from "@/lib/api/services";
@@ -40,7 +40,7 @@ import {
 } from "react-icons/fi";
 
 export const DashboardOverview = () => {
-  const { address, isConnected } = useWallet();
+  const { isConnected } = useWallet();
   const { isAuthenticated, token } = useAuth();
   const insuranceAPI = useInsuranceAPI(token);
   const [dashboardData, setDashboardData] = useState<any>(null);
@@ -48,8 +48,8 @@ export const DashboardOverview = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadDashboardData = useCallback(async () => {
-    if (!insuranceAPI) return;
+  const loadDashboardData = async () => {
+    if (!insuranceAPI || !token) return;
     
     setLoading(true);
     setError(null);
@@ -105,13 +105,13 @@ export const DashboardOverview = () => {
     } finally {
       setLoading(false);
     }
-  }, [insuranceAPI]);
+  };
 
   useEffect(() => {
     if (isAuthenticated && token && insuranceAPI) {
       loadDashboardData();
     }
-  }, [isAuthenticated, token, loadDashboardData]);
+  }, [isAuthenticated, token]); // Remove insuranceAPI from dependencies
 
   const refreshData = async () => {
     setRefreshing(true);

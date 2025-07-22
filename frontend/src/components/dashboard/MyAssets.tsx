@@ -7,7 +7,7 @@ import {
 import { useWallet } from "@/hooks/useWallet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useInsuranceAPI } from "@/lib/api/services";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { AreaChart, BarChart } from "@tremor/react";
 import { 
   FiShield, 
@@ -28,8 +28,8 @@ export const MyAssets = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadAssets = useCallback(async () => {
-    if (!insuranceAPI) return;
+  const loadAssets = async () => {
+    if (!insuranceAPI || !token) return;
     
     setLoading(true);
     setError(null);
@@ -46,13 +46,14 @@ export const MyAssets = () => {
     } finally {
       setLoading(false);
     }
-  }, [insuranceAPI]);
+  };
 
+  // Fixed useEffect - only depend on stable values
   useEffect(() => {
     if (isAuthenticated && token && insuranceAPI) {
       loadAssets();
     }
-  }, [isAuthenticated, token, loadAssets]);
+  }, [isAuthenticated, token]); // Remove insuranceAPI from dependencies
 
   const refreshData = async () => {
     setRefreshing(true);
