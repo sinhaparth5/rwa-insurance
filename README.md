@@ -1,143 +1,319 @@
-<div align="center">	
-    <p>	
-	    <a href="(https://www.morphl2.io/)">	
-            <div>	
-	           <img width="400px" src="https://blockdag.network/images/presskit/Logo.svg" align="center" alt="BlockDAG" />	
-		    </div>
-	    </a>
-            <br>
-    </p>
-      
-</div>
+# InsureGenie - Real-World Asset (RWA) Insurance Platform
 
+## 🌟 Overview
 
-# Create BlockDAG App
-A lightweight CLI tool to quickly scaffold BlockDAG blockchain applications with a clean, production-ready structure.
+InsureGenie is a groundbreaking Real-World Asset (RWA) Insurance Platform that seamlessly integrates traditional insurance with cutting-edge blockchain technology. Our mission is to revolutionize the insurance industry by providing transparent, automated, and globally accessible coverage for physical assets through the power of smart contracts and decentralized processing.
 
+### The Problem InsureGenie Solves
 
-## Quick Start
+- **Traditional insurance is slow, opaque, and centralized**: InsureGenie brings efficiency and clarity
+- **Real-world assets lack proper digital representation**: We create immutable digital twins for physical assets
+- **Claims processing is manual and prone to disputes**: We automate and verify claims with cryptographic proof
+- **No global, trustless insurance marketplace**: InsureGenie offers a universally accessible, wallet-based platform
 
-```bash
-npx create-blockdag-dapp@latest
+### Our Solution
+
+- **Tokenized Real-World Assets**: Immutable ownership records on the blockchain
+- **Smart Contract Insurance Policies**: Transparent and automated coverage
+- **Decentralized Claims Processing**: Cryptographic proof and automated payouts
+- **Global Accessibility**: Wallet-based authentication for worldwide reach
+
+## 🏗️ System Architecture
+
+InsureGenie is built with a robust, multi-layered architecture ensuring security, scalability, and efficiency.
+
+### 🔗 Blockchain Layer (Smart Contracts)
+
+Our core logic resides in a suite of Solidity smart contracts, ensuring trustless operations and data immutability.
+
+#### Asset Registry Contract
+
+- **Purpose**: Digital twin creation for physical assets
+- **Functions**: 
+  - `registerAsset()` (mints NFT)
+  - `verifyAsset()` (authority validation)
+  - `transferOwnership()` (secure changes)
+  - `updateAssetValue()` (dynamic updates)
+- **Data Structure**: Token ID, asset metadata, ownership history, verification status
+
+#### Insurance Policy Contract
+
+- **Purpose**: Automated insurance policy management
+- **Functions**: 
+  - `createPolicy()` (generates coverage)
+  - `payPremium()` (monthly processing)
+  - `calculateRisk()` (algorithm-based assessment)
+  - `processClaim()` (automated validation)
+- **Policy Structure**: Coverage amount, premium schedule, deductible, duration, risk factors
+
+#### Claims Processing Contract
+
+- **Purpose**: Transparent, automated claim resolution
+- **Functions**: 
+  - `submitClaim()` (file with evidence)
+  - `validateEvidence()` (cryptographic proof)
+  - `calculatePayout()` (algorithmic settlement)
+  - `releaseFunds()` (automated distribution)
+- **Claim Workflow**: Incident → Evidence Submission → Smart Contract Validation (with Oracles) → Conditions Check → Payout Calculation → Fund Release
+
+### 🖥️ Backend Architecture (FastAPI)
+
+The backend provides secure API access, manages data, and implements complex business logic.
+
+#### Authentication & Authorization
+
+- **System**: JWT-based authentication
+- **Features**: 
+  - Wallet signature verification
+  - Token generation/validation
+  - Role-based access control (user/verifier/admin)
+  - Session management with refresh tokens
+  - Message signing
+  - Rate limiting
+  - CORS protection
+
+#### Database Layer (SQLAlchemy)
+
+- **Core Models**: User, Asset, Policy, Claim, RiskAssessment, Verification
+- **Relationships**: Defines connections between users, assets, policies, and claims
+
+#### API Endpoints Structure
+
+- **Dashboard**: 
+  - `/api/dashboard/stats`
+  - `/api/dashboard/portfolio`
+  - `/api/dashboard/analytics`
+
+- **Asset Management**: 
+  - `POST /api/assets/`
+  - `GET /api/assets/`
+  - `PUT /api/assets/{id}`
+  - `DELETE /api/assets/{id}`
+
+- **Policy Management**: 
+  - `POST /api/policies/`
+  - `GET /api/policies/`
+  - `PUT /api/policies/{id}/pay`
+  - `GET /api/policies/{id}`
+
+- **Claims Processing**: 
+  - `POST /api/claims/`
+  - `GET /api/claims/`
+  - `PUT /api/claims/{id}/status`
+  - `GET /api/claims/{id}`
+
+#### Business Logic Layer
+
+- **Risk Assessment Engine**: 
+  - Location-based scoring
+  - Asset vulnerability analysis
+  - Historical claims data
+  - External data integration (weather, crime)
+
+- **Premium Calculation**: 
+  - Risk score weighting
+  - Asset value percentage
+  - Market rate adjustments
+  - Dynamic pricing
+
+- **Verification System**: 
+  - Document authenticity
+  - Third-party validator network
+  - Consensus-based approval
+  - Fraud detection
+
+### 🎨 Frontend Architecture (Next.js + React)
+
+The intuitive user interface provides a seamless experience for managing assets and policies.
+
+#### Wallet Integration
+
+- **Web3 Connection**: 
+  - MetaMask/WalletConnect
+  - Multi-chain support (Ethereum, BlockDAG)
+  - Transaction signing/broadcasting
+  - Real-time balance monitoring
+
+- **Authentication Flow**: Connect wallet → Sign message → Send signature to backend → Receive JWT → Authenticated session
+
+#### State Management
+
+- **React Context Providers**: AuthContext, WalletContext, InsuranceContext, ThemeContext
+- **Custom Hooks**: `useWallet()`, `useAuth()`, `useInsuranceAPI()`, `useContracts()`
+
+#### Component Architecture
+
+- **Page Components**: DashboardOverview, MyAssets, MyPolicies, Claims, RegisterAsset
+- **Shared Components**: ConnectButton, NavBar, LoadingStates, ErrorBoundaries
+
+- **Data Flow Pattern**: User Action → Component Event → Custom Hook → API Service → Backend Request → Database Query → Response → State Update → UI Re-render
+
+## 🔄 System Integration Flows
+
+### Asset Registration Process
+
+```mermaid
+graph TD
+    A[User uploads asset details] --> B(Frontend Form)
+    B --> C{Frontend calls Smart Contract}
+    C --> D[Blockchain mints NFT]
+    D --> E[Unique Token ID created]
+    E --> F{Frontend sends to Backend}
+    F --> G[Database storage]
+    G --> H[Backend links Blockchain data]
+    H --> I[Complete Record]
+    I --> J[Verification Queue]
+    J --> K[Manual Validation]
+    K --> L[Asset Verified]
+    L --> M[Insurance Eligible]
 ```
 
+### Insurance Policy Creation
 
-This will guide you through creating a new BlockDAG application with a simple interactive prompt.
-
-
-## Features
-
-
-- **Streamlined Setup**: Create a complete BlockDAG application with a single command
-- **Modern Stack**: Next.js frontend with Web3 integration
-- **Dual Smart Contract Development**: Includes both Hardhat and Foundry environments
-- **Production Ready**: Follows best practices for BlockDAG development
-- **Lightweight**: Fast project creation with minimal dependencies
-
-
-## Project Structure
-
-```
-your-app/
-├── contracts/
-│   ├── hardhat/
-│   │   ├── contracts/     # Solidity smart contracts
-│   │   ├── scripts/       # Deployment scripts
-│   │   └── test/          # Contract tests
-│   └── foundry/
-│       ├── src/           # Solidity smart contracts
-│       ├── test/          # Contract tests
-│       └── script/        # Deployment scripts
-└── frontend/
-    ├── app/               # Next.js application
-    ├── components/        # React components
-    └── public/            # Static assets
+```mermaid
+graph TD
+    A[User selects verified asset] --> B(Policy Configuration)
+    B --> C[Risk Assessment Calculation]
+    C --> D[AI Scoring]
+    D --> E[Premium Calculation]
+    E --> F[Dynamic Pricing]
+    F --> G{Smart Contract Deployment}
+    G --> H[Policy Creation]
+    H --> I[Payment Processing]
+    I --> J[Premium Collection]
+    J --> K[Policy Activation]
+    K --> L[Coverage Begins]
+    L --> M[Continuous Monitoring]
+    M --> N[Claims Eligibility]
 ```
 
+### Claims Processing Workflow
 
-## Environment Setup
-
-
-After creating your project, you'll need to set up your environment:
-
-### Frontend (.env.local)
-
-```
-NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your_wallet_connect_project_id
-```
-
-Get your WalletConnect Project ID at https://cloud.walletconnect.com/
-
-### Smart Contracts (.env)
-
-```
-PRIVATE_KEY=your_private_key_here
-RPC_URL=your_rpc_url_here
+```mermaid
+graph TD
+    A[Incident occurs] --> B(User reports claim)
+    B --> C[Evidence Submission]
+    C --> D[Document Upload]
+    D --> E{Smart Contract Validation}
+    E --> F[Automated Checks]
+    F --> G[Verifier Review]
+    G --> H[Human Validation]
+    H --> I[Payout Calculation]
+    I --> J[Amount Determination]
+    J --> K[Fund Release]
+    K --> L[Automatic Payment]
+    L --> M[Policy Update]
+    M --> N[Record Maintenance]
 ```
 
+## 💡 Key Innovations
 
-## Development Workflow
+### Dual Registration System
 
-1. **Create your project**:
+- **Blockchain**: Immutable ownership proof
+- **Database**: Rich metadata and business logic
+- **Benefits**: Decentralized trust + centralized efficiency
+
+### Hybrid Claims Processing
+
+- **Smart Contracts**: Automated validation
+- **Human Verification**: Complex case handling
+- **AI Risk Assessment**: Fraud detection
+
+### Dynamic Risk Pricing
+
+- **Real-time data**: Weather, crime, market conditions
+- **Machine learning**: Historical pattern analysis
+- **Personalized rates**: Individual risk profiles
+
+### Cross-Chain Compatibility
+
+- **Multi-blockchain support**: Ethereum, BlockDAG, others
+- **Unified interface**: Single frontend for all chains
+- **Interoperability**: Asset transfers between chains
+
+## 🎯 Business Model
+
+InsureGenie is designed with a sustainable business model in mind, providing value to all participants in the ecosystem.
+
+### Revenue Streams
+
+- Premium commissions (percentage of policy payments)
+- Transaction fees (smart contract interactions)
+- Verification services (asset validation)
+- API licensing (third-party integrations)
+
+### Value Propositions
+
+- **For Users**: Transparent, fast, global insurance
+- **For Insurers**: Reduced fraud, automated processing
+- **For Verifiers**: New income opportunity
+- **For Developers**: Robust insurance infrastructure API
+
+## 🚀 Technical Advantages
+
+- **Transparency**: All policies stored on public blockchain, immutable claim history, open-source smart contracts
+- **Automation**: Reduced manual processing, faster claim settlements, lower operational costs
+- **Global Accessibility**: No geographic restrictions, 24/7 availability, wallet-based access
+- **Programmable Money**: Automated premium collection, instant claim payouts, conditional logic execution
+
+## 🚀 Getting Started
+
+To run InsureGenie locally, follow these steps:
+
+### Prerequisites
+
+- Node.js (for frontend)
+- Python 3.x (for backend)
+- npm (Node Package Manager)
+- uvicorn (Python ASGI server)
+
+### Backend Setup
+
+1. **Clone the repository:**
    ```bash
-   npx @blockdag/create-blockdag-app@latest
-   cd my-blockdag-app
+   git clone https://github.com/sinhaparth5/rwa-insurance.git
+   cd rwa-insurance
    ```
-   
-2. **Set up the frontend**:
+
+2. **Install Python requirements:**
    ```bash
-   cd frontend
-   cp .env.example .env.local
-   # Edit .env.local with your WalletConnect Project ID
-   yarn install
-   yarn dev
+   pip install -r requirements.txt
    ```
-   
-3. **Set up Foundry**:
+   *(If you don't have requirements.txt, you'll need to pip install fastapi sqlalchemy uvicorn and any other libraries your backend uses.)*
+
+3. **Initialize the database:**
    ```bash
-   cd ../contracts/foundry
-   cp .env.example .env
-   # Edit .env with your private key and RPC URL
-   forge build
+   python scripts/init_db.py
    ```
-   
-4. **Set up Hardhat**:
+
+4. **Run the backend server:**
    ```bash
-   cd ../hardhat
-   yarn install
-   npx hardhat compile
+   uvicorn app.main:app --host 0.0.0.0 --port 8000
    ```
 
-5. **Add Foundry submodules** (optional but recommended):
+   The backend should now be running on http://localhost:8000.
+
+### Frontend Setup
+
+1. **Navigate to the frontend directory:**
    ```bash
-   # From project root
-   git submodule add https://github.com/OpenZeppelin/openzeppelin-contracts.git contracts/foundry/lib/openzeppelin-contracts
-   git submodule add https://github.com/foundry-rs/forge-std contracts/foundry/lib/forge-std
+   cd frontend # Assuming your frontend code is in a 'frontend' directory
    ```
 
-## Smart Contract Development
+2. **Install frontend dependencies:**
+   ```bash
+   npm install
+   ```
 
-### Using Hardhat
+3. **Build the frontend application:**
+   ```bash
+   npm run build
+   ```
 
-```bash
-cd contracts/hardhat
-npx hardhat compile
-npx hardhat test
-npx hardhat run scripts/deploy.ts --network primordial
-```
+4. **Start the frontend application:**
+   ```bash
+   npm run start
+   ```
 
-### Using Foundry
-
-```bash
-cd contracts/foundry
-forge build
-forge test
-forge script script/Deployer.s.sol --rpc-url $RPC_URL --broadcast --legacy --private-key $PRIVATE_KEY
-```
-
-## Frontend Development
-
-```bash
-cd frontend
-yarn dev
-```
+   The frontend should now be running, typically on http://localhost:3000 (or another port if configured).
